@@ -92,7 +92,7 @@ class o2oApi {
         }
     }
 
-    async _getLeadData(phone, email) {
+    async _getLeadData(phone, email, id) {
         if (phone !== '' && email !== '') {
             try {
                 const data = (await this.getLeadFromPhoneOrEmail(phone, email)).data.data;
@@ -102,7 +102,8 @@ class o2oApi {
                     phone: data.info.phone,
                     email: data.info.email,
                     name: data.info.fullName,
-                    gender: data.gender.dataValue
+                    gender: data.gender.dataValue,
+                    zen_req_id: id
                 }
 
                 var customer_care_info = {
@@ -110,19 +111,22 @@ class o2oApi {
                     sales_man: data.saleman.email,
                     take_note: data.info.note,
                     tags_keywords: data.info.utmKeyword,
-                    appointment_time: data.calendar.startTime
+                    appointment_time: data.calendar.startTime,
+                    zen_req_id: id
                 }
 
                 var digital_source_info = {
                     conversion: data.o2oTracking.statistics.goalNames,
                     source_medium: data.o2oTracking.statistics.utmSourceMediums,
                     campaign_name: data.o2oTracking.statistics.utmCampaigns,
-                    keywords_terms: [...data.o2oTracking.statistics.utmKeywords, ...data.o2oTracking.statistics.utmTerms]
+                    keywords_terms: [...data.o2oTracking.statistics.utmKeywords, ...data.o2oTracking.statistics.utmTerms],
+                    zen_req_id: id
                 }
 
                 var web_access = {
                     first_web_access_time: data.o2oTracking.statistics.firstAccess,
-                    last_web_access_time: data.o2oTracking.statistics.lastAccess
+                    last_web_access_time: data.o2oTracking.statistics.lastAccess,
+                    zen_req_id: id
                 }
 
                 return {

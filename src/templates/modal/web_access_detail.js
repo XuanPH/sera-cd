@@ -67,11 +67,15 @@ class WebAccessDetailModel {
         var _this = this;
         $("#itemperpages").on('change', function (item) {
             _this.page.pageSize = parseInt($(item.target).val());
+            _this.page.currentPage = 1;
             _this.read();
         });
         $('input.page-input').keyup(function (e) {
             if (e.keyCode === 13 && !isNaN($(e.target).val())) {
                 _this.page.currentPage = parseInt($(e.target).val());
+                if (_this.page.currentPage >= _this.page.totalPages) {
+                    _this.page.currentPage = _this.page.totalPages - 1;
+                }
                 _this.read();
             }
         });
@@ -87,14 +91,14 @@ class WebAccessDetailModel {
     renderNavPage() {
         let _this = this;
         const html = `<ul class="pagination justify-content-center">
-                                    <li  data-type='down' class="page-item controllPage ${ _this.page.currentPage === 1 ? 'disabled' : ''}">
+                                    <li  data-page='${_this.page.currentPage - 1}' class="page-item controllPage ${_this.page.currentPage === 1 ? 'disabled' : ''}">
                                         <a class="page-link" href="javascript:void(0)" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                             <span class="sr-only">Previous</span>
                                         </a>
                                     </li>
                                      ${_this.renderPageNumber()}
-                                    <li data-type='down' class="page-item controllPage ${ _this.page.currentPage === _this.page.totalPages - 1 ? 'disabled' : ''}">
+                                    <li data-page='${_this.page.currentPage + 1}' class="page-item controllPage ${_this.page.currentPage === _this.page.totalPages - 1 ? 'disabled' : ''}">
                                         <a class="page-link" href="javascript:void(0)" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                             <span class="sr-only">Next</span>
@@ -104,19 +108,11 @@ class WebAccessDetailModel {
         $(".navigation").html('').html(html);
         addEventClickToElement('div.modal_detail li.page-item', (e) => {
             var dataPage = $(e.target).closest('li').data().page;
-            if (!isNaN(dataPage)) {
+            if (!isNaN(dataPage) && !$(e.target).closest('li').hasClass('disabled')) {
                 _this.page.currentPage = dataPage;
                 _this.read();
             }
         });
-        $('li.controllPage ').keyup(function (e) {
-            if ($(e.target).data().type === 'down')
-                _this.page.currentPage = parseInt($(e.target).val()) - 1;
-            if ($(e.target).data().type === 'up')
-                _this.page.currentPage = parseInt($(e.target).val()) + 1;
-            _this.read();
-        });
-
     }
 
     renderPageNumber() {

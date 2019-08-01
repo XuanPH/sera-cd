@@ -19,7 +19,7 @@ export async function newTicketSiderbar() {
             console.log(requester);
             if (requester) {
                 newTicketBar.set('ticket.subject', requester.subject ? requester.subject : 'unknown requester');
-                newTicketBar.set('ticket.requester', { phone: requester.phone ? requester.phone : '' })
+                newTicketBar.set('ticket.requester', { id: requester.zen_req_id ? requester.zen_req_id : '' })
                 newTicketBar.set('ticket.assignee', { userId: currentUser.id, groupId: currentUser.groups[0].id });
                 newTicketBar.set('ticket.tags', ['SERA-CD']);
                 newTicketBar.set('ticket.priority', 'low')

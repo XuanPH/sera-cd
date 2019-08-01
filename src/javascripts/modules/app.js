@@ -52,8 +52,8 @@ class App {
 
     const dataUser = this.getEmailAndPhoneFromZendeskUser(await this._handleDataUserTicket());
     const isMaintain = false;
-
-    const leads = await this.o2oApi.getLeadData(dataUser.phone, dataUser.email);
+    console.log(dataUser);
+    const leads = await this.o2oApi.getLeadData(dataUser.phone, dataUser.email, dataUser.id);
 
     // const assignedInfo = (await this._client.get('user'))
     if (leads && this.o2oToken && !isMaintain) {
@@ -71,11 +71,11 @@ class App {
       });
 
       render('web_access', renderWebAccessed(leads.web_access), () => {
-        this.initWebAccessedFunction();
+        this.initWebAccessedFunction(this._client, leads.web_access);
       });
 
       render('interaction_history', renderInterationHistory.bind(this).call(), () => {
-        initInteractionHistoryFunction(this._client, dataUser);
+        initInteractionHistoryFunction(this._client, leads.customer_info);
       });
 
       render('popup_create .popup_content', renderPopupCreateType(), () => {
@@ -120,7 +120,8 @@ class App {
     var email = _.filter(dataUser.identities, (o) => { return o.type == 'email' })[0]
     return {
       phone: phone ? phone.value : '',
-      email: email ? email.value : ''
+      email: email ? email.value : '',
+      id: dataUser.id
     }
   }
 

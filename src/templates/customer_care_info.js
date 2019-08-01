@@ -6,7 +6,10 @@ export function renderCustomerCareInfo(leads) {
               <i class="fas fa-chevron-up showHide pointer"></i> Customer care info
               <div class='header-righ'>
                 <i class="fas fa-pen pointer"></i>
-                <i class="fas fa-plus pointer" data-ticket_subject='add customer care info'  id='openTypeCreate2'></i>
+                 <i class="fas fa-plus pointer"  id='dropdownMenuButton2' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                    <a  data-ticket_subject='add customer care info' id='openTypeCreate2' class="dropdown-item" href="#"> + Create ticket</a>
+                  </div>
               </div>
             </h5>
             <div class="card-body">

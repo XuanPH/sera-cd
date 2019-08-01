@@ -100,6 +100,9 @@ embed.loading {
   margin: 2px 5px !important;
   font-weight: 100;
 }
+.c-tag.c-tag--red {
+  background-color: #e34f32 !important;
+}
 
 .pointer {
   cursor: pointer;
@@ -164,6 +167,15 @@ div.web_access span.time-gray {
   color: #969696;
 }
 
+div.web_access .view_more {
+  padding: 0px 5px;
+  text-align: right;
+  font-size: 11px;
+}
+div.web_access .view_more a {
+  font-size: 10px;
+}
+
 /* popup content */
 div.popup {
   width: 100%;
@@ -224,7 +236,7 @@ ul.timeline > li {
   margin-left: 50px;
   margin-right: 20px;
 }
-ul.timeline > li > div {
+ul.timeline > li > div.icon-timeline {
   background: white;
   display: inline-block;
   position: absolute;
@@ -368,4 +380,12 @@ div.create_ticket span {
 }
 .notfound a {
   font-size: 16px;
+}
+
+/* chart modal */
+div.chart_modal h1 {
+  text-align: center !important;
+}
+div.chart_modal {
+  margin-right: 0;
 }

@@ -1,5 +1,4 @@
-import { addEventClickToElement, addEventShowHideHeader } from '../javascripts/lib/helpers';
-import { triggerOpenPopupCreate } from './modal/popup';
+import { addEventClickToElement, addEventShowHideHeader, setLocalStorage } from '../javascripts/lib/helpers';
 window.chartColors = {
     red: 'rgb(255, 99, 132)',
     orange: 'rgb(255, 159, 64)',
@@ -9,12 +8,16 @@ window.chartColors = {
     purple: 'rgb(153, 102, 255)',
     grey: 'rgb(201, 203, 207)'
 };
+
 export function renderWebAccessed(leads) {
     return `<div class="card web_access">
             <h5 class="card-header">
               <i class="fas fa-chevron-up showHide pointers"></i> Web accessed
               <div class='header-righ'>
-                <i class="fas fa-plus pointer" id='openTypeCreate4'></i>
+                 <i class="fas fa-plus pointer"  id='dropdownMenuButton4' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+                    <a  data-ticket_subject='add web access' id='openTypeCreate4' class="dropdown-item" href="#"> + Create ticket</a>
+                  </div>
               </div>
             </h5>
             <div class="card-body">
@@ -43,13 +46,13 @@ export function renderWebAccessed(leads) {
                             <div class="c-tag"><span dir="ltr">Seen 10 pages</span></div>
                             <div class="c-tag"><span dir="ltr">Accessed 70 times</span></div>
                         </div>
-                        <div class="col-8 marginTop15 gray13">#Total visits 3 days ago </div>
-                        <div class="col-4 marginTop15"> <a href='#'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
+                        <div class="col-9 marginTop15 gray13">#Total visits 3 days ago </div>
+                        <div class="col-3 marginTop15 view_more"> <a data-type_chart='visit' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
                         <div class='col-12 marginTop8'>
                             <canvas id="visitChart" width="400" height="200"></canvas>
                         </div>
-                         <div class="col-8 marginTop15 gray13">#Accessed/page 3 days ago </div>
-                        <div class="col-4 marginTop15"> <a href='#'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
+                         <div class="col-9 marginTop15 gray13">#Accessed/page 3 days ago </div>
+                        <div class="col-3 marginTop15 view_more"> <a data-type_chart='page_view' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
                         <div class='col-12 marginTop8'>
                             <canvas id="pageViewChart" width="400" height="200"></canvas>
                         </div>
@@ -187,9 +190,17 @@ export function initChartPageView() {
     });
 };
 
-export function initWebAccessedFunction() {
-    addEventClickToElement('#openTypeCreate4', (e) => { triggerOpenPopupCreate(e, true, this._client) });
-    addEventClickToElement('#viewDetail', openAccessLog.bind(this))
+export function initWebAccessedFunction(_client, data) {
+    // addEventClickToElement('#openTypeCreate4', (e) => { triggerOpenPopupCreate(e, true, this._client) });
+    addEventClickToElement('#openTypeCreate4', (e) => {
+        var subject = $(e.target).data().ticket_subject || 'unknown subject';
+        data.subject = subject;
+        setLocalStorage('requester', data);
+        _client.invoke('routeTo', 'ticket', 'new');
+    });
+
+    addEventClickToElement('#viewDetail', openAccessLog.bind(this));
+    addEventClickToElement('.viewMore', (e) => openChart(this, e));
     addEventShowHideHeader('.web_access', this._client);
     initChartPageView();
     initChartVisitChart();
@@ -210,6 +221,27 @@ export function openAccessLog() {
         var modalClient = _client.instance(instanceGuid);
         setTimeout(() => {
             var passParams = { type: 'web_access_log', parentGuid: _client._instanceGuid, o2oApi: o2oApi };
+            modalClient.trigger('template_getting_type', passParams);
+        }, 500);
+    });
+}
+
+export function openChart(_this, e) {
+    let _client = _this._client;
+    let o2oApi = _this.o2oApi;
+    let type_chart = $(e.target).data().type_chart;
+    return _client.invoke('instances.create', {
+        location: 'modal',
+        url: 'assets/iframe.html',
+        size: {
+            width: '800px',
+            height: '400px'
+        }
+    }).then(function (modalContext) {
+        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
+        var modalClient = _client.instance(instanceGuid);
+        setTimeout(() => {
+            var passParams = { type: 'web_access_chart', parentGuid: _client._instanceGuid, o2oApi: o2oApi, type_chart: type_chart };
             modalClient.trigger('template_getting_type', passParams);
         }, 500);
     });

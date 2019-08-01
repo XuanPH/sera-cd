@@ -18,7 +18,8 @@
     "build:dev": "webpack --mode=development",
     "build": "webpack -p --mode=production",
     "lint": "standard",
-    "start": "zat server -p ./dist --unattended"
+    "start": "zat server -p ./dist --unattended",
+    "build-pack": "yarn build && zat package --path=dist"
   },
   "devDependencies": {
     "@zendeskgarden/css-arrows": "^3.1.1",

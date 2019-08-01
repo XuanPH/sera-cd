@@ -1,11 +1,15 @@
 import { addEventClickToElement, addEventShowHideHeader, templatingLoop, setLocalStorage } from "../javascripts/lib/helpers";
 import { triggerOpenPopupFilter, triggerOpenPopupCreate, openCreateTicket } from "./modal/popup";
 
-function interactionItem(data) {
+function interactionItem(data, index) {
   return ` <li>
-              <div><i class="${data.icon}"></i></div>
+              <div class='icon-timeline'><i class="${data.icon}"></i></div>
               <a target='_blank' href='javascript:void(0)' >${data.title}</a>
-              <i class="fas fa-plus pointer" data-ticket_subject='${data.title}'></i>
+              <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonw${index}">
+                    <a data-ticket_subject='${data.title}' class="dropdown-item add_ticket" href="#"> + Create ticket</a>
+                  </div>
               <p>${data.time} ${data.perfix} ${data.note}</p>
             </li>`
 }
@@ -37,7 +41,7 @@ export function renderInterationHistory() {
 }
 export function initInteractionHistoryFunction(_client, data) {
   addEventClickToElement('#openTypeFilter', (e) => { triggerOpenPopupFilter(e, true, _client) });
-  addEventClickToElement('ul.timeline i.fa-plus', (e) => {
+  addEventClickToElement('ul.timeline .add_ticket', (e) => {
     var subject = $(e.target).data().ticket_subject || 'unknown subject';
     data.subject = subject;
     setLocalStorage('requester', data);

@@ -7,7 +7,10 @@ export function renderCustomerInfo(leads) {
               <i class="fas fa-chevron-up showHide pointer"></i>  Customer info
               <div class='header-righ'>
                 <i class="fas fa-pen pointer"></i>
-                <i class="fas fa-plus pointer" data-ticket_subject='add customer info' id='openTypeCreate1'></i>
+                <i class="fas fa-plus pointer"  id='dropdownMenuButton1' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <a data-ticket_subject='add customer info' id='openTypeCreate1' class="dropdown-item" href="#"> + Create ticket</a>
+                  </div>
               </div>
             </h5>
             <div class="card-body">

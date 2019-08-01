@@ -1,12 +1,12 @@
 {
   "name": "SERA-CD",
   "author": {
-    "name": "John Doe",
-    "email": "support@zendesk.com",
-    "url": "https://www.zendesk.com"
+    "name": "Twin Software Solutions",
+    "email": "support@twin.vn",
+    "url": "https://twin.vn"
   },
   "defaultLocale": "en",
-  "private": true,
+  "private": false,
   "location": {
     "support": {
       "ticket_sidebar": {
@@ -21,7 +21,8 @@
       },
       "background": {
         "url": "assets/iframe.html"
-      }
+      },
+      "nav_bar": "https://twin.vn/"
     }
   },
   "parameters": [

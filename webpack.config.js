@@ -78,7 +78,10 @@ module.exports = {
       _: 'lodash',
       $: 'jquery',
       jQuery: 'jquery',
+      jquery: 'jquery',
       'window.jQuery': 'jquery',
+      // 'Popper': 'popper.js/dist/umd/popper.min.js'
+      'Popper': 'popper.js/dist/umd/popper.min.js'
     }),
 
     // Copy over static assets

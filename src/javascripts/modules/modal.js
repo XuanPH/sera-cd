@@ -2,6 +2,7 @@
 import { render, renderSelect2 } from '../../javascripts/lib/helpers'
 import WebAccessDetailModel from '../../templates/modal/web_access_detail'
 import { ticketCreateModal, initCreateTicketFunction } from '../../templates/modal/ticket_create'
+import WebAccessChart from '../../templates/modal/web_access_chart'
 import 'select2'
 import o2oApi from '../../api/o2oApi';
 class Modal {
@@ -16,6 +17,7 @@ class Modal {
             this.initializePromise = this.init(template_getting_type.type);
             this.o2oApi = new o2oApi(template_getting_type.o2oApi.token, template_getting_type.o2oApi.leadId);
             this.webAccessedModal = new WebAccessDetailModel(this.o2oApi);
+            this.webAccessChart = new WebAccessChart(template_getting_type.type_chart);
         });
     }
 
@@ -33,11 +35,15 @@ class Modal {
                 this.webAccessedModal.init();
                 this.webAccessedModal.read();
             }
+            if (type === 'web_access_chart') {
+                this.webAccessChart.init();
+            }
         });
     }
     async handleModal(type, data) {
         switch (type) {
             case 'web_access_log': return await this.webAccessedModal.render();
+            case 'web_access_chart': return await this.webAccessChart.render();
             case 'create_ticket': return ticketCreateModal(data, this);
             // case 'filter_modal': return null; break;
             default: return await this.webAccessedModal.render();
