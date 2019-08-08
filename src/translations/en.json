@@ -123,5 +123,6 @@
     "deniedLead": "Salesman denied lead",
     "unassignLead": "No available salesman/manager to assign leads",
     "assignDirector": "No available salesman/manager to assign leads"
-  }
+  },
+  "imageTelegram": "images of telegram"
 }

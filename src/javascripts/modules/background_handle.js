@@ -16,7 +16,6 @@ export async function newTicketSiderbar() {
             var newTicketBar = client.instance(context.instanceGuid)
             var currentUser = (await newTicketBar.get('currentUser')).currentUser;
             var requester = await getLocalStorage('requester', true);
-            console.log(requester);
             if (requester) {
                 newTicketBar.set('ticket.subject', requester.subject ? requester.subject : 'unknown requester');
                 newTicketBar.set('ticket.requester', { id: requester.zen_req_id ? requester.zen_req_id : '' })

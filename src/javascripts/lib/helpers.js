@@ -4,8 +4,6 @@ export function resizeContainer(client, max = Number.POSITIVE_INFINITY, ignoreMa
   const newHeight = !ignoreMax ? Math.max(document.body.clientHeight, max) : document.body.clientHeight
   return client.invoke('resize', { height: newHeight })
 }
-
-
 /**
  * Helper to render a dataset using the same template function
  * @param {Array} set dataset
@@ -58,6 +56,7 @@ export function addEventClickToElement(querySelector, fn, callback) {
   var element = $(querySelector);
   if (element && element.length > 0) {
     element.each(function (index, elChild) {
+      elChild.removeEventListener('click', fn);
       elChild.addEventListener('click', fn);
     })
   }
@@ -67,7 +66,7 @@ export function addEventClickToElement(querySelector, fn, callback) {
 export function addEventShowHideHeader(component, client, callback) {
   var selector = document.querySelector(`${component} i.showHide`);
   if (selector) {
-    selector.addEventListener('click', (e) => {
+    var fn = (e) => {
       var currentState = $(e.target).hasClass('fa-chevron-up');
       if (currentState) {
         $(selector).closest('div').find('div.card-body').hide(200);
@@ -81,7 +80,9 @@ export function addEventShowHideHeader(component, client, callback) {
       setTimeout(() => {
         resizeContainer(client, 0, true);
       }, 250);
-    });
+    };
+    selector.removeEventListener('click', (e) => fn(e));
+    selector.addEventListener('click', (e) => fn(e));
   }
 }
 
@@ -178,9 +179,9 @@ export function substrByNum(str, number, defaultLastPrefix = "...") {
 export function renderLoading(insideContent = false, selector = '', ) {
   if (insideContent) {
     $(selector).html('');
-    $(selector).html(`<div style='height: 100px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`);
+    $(selector).html(`<div style='height: 100px;width: 300px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`);
   } else {
-    return `<div style='height: 100px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`
+    return `<div style='height: 100px;width: 300px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`
   }
 
 }

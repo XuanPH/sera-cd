@@ -14,6 +14,7 @@
     >{{ item.staffInCharge }}</a
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'status'"
@@ -25,6 +26,8 @@
   ><br />
   <span
     >{{$t(`callLogs.from`)
+
+
     }}<span v-if="item.previousStatus" style="font-weight: bold">
       {{ item.previousStatusValue }} </span
     ><span style="font-weight: bold" v-else>
@@ -33,6 +36,8 @@
   >
   <span
     >{{$t(`callLogs.to`)
+
+
     }}<span v-if="item.currentStatus" style="font-weight: bold">
       {{ item.currentStatusValue }} </span
     ><span style="font-weight: bold" v-else>
@@ -40,6 +45,7 @@
     ></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'statusCalendar'"
@@ -52,6 +58,8 @@
   ><br />
   <span
     >{{$t(`callLogs.from`)
+
+
     }}<span v-if="item.previousStatus" style="font-weight: bold"
       >{{ $t("history." + item.previousStatus) }} </span
     ><span style="font-weight: bold" v-else>
@@ -60,6 +68,8 @@
   >
   <span
     >{{$t(`callLogs.to`)
+
+
     }}<span v-if="item.currentStatus" style="font-weight: bold">
       {{ $t("history." + item.currentStatus) }} </span
     ><span style="font-weight: bold" v-else>
@@ -67,6 +77,7 @@
     ></span
   >
 </span>
+
 <span class="size-14  display-block break-word" v-else-if="item.type == 'edit'">
   <span class="size-14 blue--text" style="padding: 0px;">{{
     $t("history." + item.currentStatus)
@@ -78,6 +89,7 @@
     </span></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'editCalendar'"
@@ -89,6 +101,7 @@
     >{{ $t("history." + item.currentStatus) }}</router-link
   ><br />
 </span>
+
 <span class="size-14  display-block break-word" v-else-if="item.type == 'note'">
   <span
     class="size-14 blue--text"
@@ -101,6 +114,7 @@
     </span></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'sendLead'"
@@ -116,6 +130,7 @@
     </span></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'recieveTelegram'"
@@ -131,6 +146,7 @@
     </span></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'sendCalendar'"
@@ -147,6 +163,7 @@
     </span></span
   >
 </span>
+
 <span
   class="size-14  display-block break-word"
   v-else-if="item.type == 'responseSale'"

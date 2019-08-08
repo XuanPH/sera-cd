@@ -106,20 +106,21 @@ export function initPopupCreateFunction(_client) {
 }
 
 export function openCreateTicket() {
-  let _client = this;
+  let _client = this._client;
+  let o2oApi = this.o2oApi;
   return _client.invoke('instances.create', {
     location: 'modal',
     url: 'assets/iframe.html',
     size: {
-      width: '1024px',
-      height: '450px'
+      width: '450px',
+      height: '300px'
     }
   }).then(function (modalContext) {
     var instanceGuid = modalContext['instances.create'][0].instanceGuid;
     var modalClient = _client.instance(instanceGuid);
     setTimeout(() => {
       document.querySelector('.popup_create .fa-times').click();
-      var passParams = { type: 'create_ticket', parentGuid: _client._instanceGuid };
+      var passParams = { type: 'create_ticket', parentGuid: _client._instanceGuid, o2oApi: o2oApi };
       modalClient.trigger('template_getting_type', passParams);
     }, 500);
   });

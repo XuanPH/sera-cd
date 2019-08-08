@@ -1,15 +1,14 @@
 import I18n from '../../javascripts/lib/i18n'
 import { resizeContainer, render, setLocalStorage } from '../../javascripts/lib/helpers'
-import { renderCustomerInfo, openModalType, initCustomerInfoFunction } from '../../templates/customer_info';
+import { renderCustomerInfo, openModalType, initCustomerInfoFunction, CustomerInfo } from '../../templates/customer_info';
 import { renderWebAccessed, initWebAccessedFunction } from '../../templates/web_accessed';
 import { renderCustomerCareInfo, initCustomerCreateInfoFunction } from '../../templates/customer_care_info'
 import { renderDSI, initDSIFunction } from '../../templates/digital_source_info'
 import { renderPopupCreateType, renderPopupFilter, initPopupFilterFunction, initPopupCreateFunction } from '../../templates/modal/popup'
-import { renderInterationHistory, initInteractionHistoryFunction } from '../../templates/interation-history'
 import { renderNotFound, initNotFoundFunction } from '../../templates/not_found';
 import { ticketSiderbar, newTicketSiderbar } from './background_handle';
 import o2oApi from '../../api/o2oApi'
-
+import InteractionHistory from '../../templates/interation-history'
 
 const MAX_HEIGHT = 5000
 const API_ENDPOINTS = {
@@ -24,14 +23,19 @@ class App {
     this.states = {
       location: location
     }
+    this.o2oApi = new o2oApi(this.o2oToken);
+    setLocalStorage('token', this.o2oToken);
     this.initializePromise = this.init()
     this.initWebAccessedFunction = initWebAccessedFunction.bind(this);
-    this._handleDataUserTicket = this._handleDataUserTicket.bind(this);
+    this.handleDataUserTicket = this._handleDataUserTicket.bind(this);
     this.ticketSiderbar = ticketSiderbar.bind(this);
     this.newTicketSiderbar = newTicketSiderbar.bind(this);
     this.handleError = this._handleError.bind(this);
-    this.o2oApi = new o2oApi(this.o2oToken);
-    setLocalStorage('token', this.o2oToken);
+
+
+    this.interactionHistory = new InteractionHistory(this);
+    this.customerInfo = new CustomerInfo(this);
+
   }
   /**
    * Initialize module, render main template
@@ -50,16 +54,15 @@ class App {
     this.newTicketSiderbar();
     //
 
-    const dataUser = this.getEmailAndPhoneFromZendeskUser(await this._handleDataUserTicket());
+    const dataUser = this.getEmailAndPhoneFromZendeskUser(await this.handleDataUserTicket());
     const isMaintain = false;
-    console.log(dataUser);
-    const leads = await this.o2oApi.getLeadData(dataUser.phone, dataUser.email, dataUser.id);
+    const leads = await this.o2oApi.getLeadData(dataUser, organizations);
 
     // const assignedInfo = (await this._client.get('user'))
-    if (leads && this.o2oToken && !isMaintain) {
-      render('loader', renderCustomerInfo(leads.customer_info), () => {
+    if (leads && !leads.err && this.o2oToken && !isMaintain) {
+      render('loader', this.customerInfo.render(leads.customer_info), () => {
         // document.getElementById('openTypeCreate1').addEventListener('click', openModalType.bind(this));
-        initCustomerInfoFunction(this._client, leads.customer_info);
+        this.customerInfo.init(leads.customer_info);
       });
 
       render('customer_care_info', renderCustomerCareInfo(leads.customer_care_info), () => {
@@ -74,8 +77,9 @@ class App {
         this.initWebAccessedFunction(this._client, leads.web_access);
       });
 
-      render('interaction_history', renderInterationHistory.bind(this).call(), () => {
-        initInteractionHistoryFunction(this._client, leads.customer_info);
+      render('interaction_history', this.interactionHistory.render(), () => {
+        this.interactionHistory.init(leads.customer_info)
+        this.interactionHistory.read();
       });
 
       render('popup_create .popup_content', renderPopupCreateType(), () => {
@@ -89,9 +93,10 @@ class App {
       return resizeContainer(this._client, MAX_HEIGHT, true)
 
     } else {
-      render('loader', renderNotFound(), () => {
-        initNotFoundFunction();
-      });
+      if (leads)
+        render('loader', renderNotFound(leads.msg), () => {
+          initNotFoundFunction();
+        });
     }
   }
 
@@ -121,7 +126,8 @@ class App {
     return {
       phone: phone ? phone.value : '',
       email: email ? email.value : '',
-      id: dataUser.id
+      id: dataUser.id,
+      name: dataUser.name,
     }
   }
 

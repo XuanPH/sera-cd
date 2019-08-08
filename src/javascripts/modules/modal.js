@@ -9,10 +9,12 @@ class Modal {
     constructor(client, appData) {
         this.state = {};
         this.typeModal = "typeModal";
-        this.handleModal = this.handleModal.bind(this);
+        this.handleModal = this._handleModal.bind(this);
+        this.handleDataUserTicket = this._handleDataUserTicket.bind(this);
         this._client = client;
         this._appData = appData;
         client.on('template_getting_type', (template_getting_type) => {
+            debugger;
             this._parentClient = client.instance(template_getting_type.parentGuid);
             this.initializePromise = this.init(template_getting_type.type);
             this.o2oApi = new o2oApi(template_getting_type.o2oApi.token, template_getting_type.o2oApi.leadId);
@@ -40,7 +42,7 @@ class Modal {
             }
         });
     }
-    async handleModal(type, data) {
+    async _handleModal(type, data) {
         switch (type) {
             case 'web_access_log': return await this.webAccessedModal.render();
             case 'web_access_chart': return await this.webAccessChart.render();
@@ -54,6 +56,10 @@ class Modal {
             '<span><i class="fas fa-user"></i>    ' + state.text + '</span>'
         );
         return $state;
+    }
+    async _handleDataUserTicket() {
+        var ticket =  (await this._client.get('ticket')).ticket.requester;
+        var user = (await this._client.get('user')).user; 
     }
 
 }
