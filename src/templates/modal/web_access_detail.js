@@ -1,4 +1,10 @@
-import { templatingLoop, isNullOrTempty, substrByNum, renderLoading, addEventClickToElement } from "../../javascripts/lib/helpers";
+import {
+    templatingLoop,
+    replaceNullOrTempty,
+    substrByNum,
+    renderLoading,
+    addEventClickToElement
+} from "../../javascripts/lib/helpers";
 
 class WebAccessDetailModel {
     constructor(o2oApi) {
@@ -56,7 +62,7 @@ class WebAccessDetailModel {
                             <a href='${item.domain}${item.urlPath}'>${substrByNum(`${item.domain}${item.urlPath}`, 40)}</a>
                         </div>
                         ${item.refererDomain && `<div class="col-10"><a href=' ${item.refererDomain}${item.refererUrlPath}'>${substrByNum(`${item.refererDomain}${item.refererUrlPath}`, 40)}</a><span class="badge badge-primary">Referer</span> </div>`}
-                        <div class="col-10">${item.utmSource} / ${item.utmMedium} / ${item.utmCampaign} ${isNullOrTempty(item.utmContent, `/ ${item.utmContent}`)} ${isNullOrTempty(item.utmKeyword, `/ ${item.utmKeyword}`)}</div>
+                        <div class="col-10">${item.utmSource} / ${item.utmMedium} / ${item.utmCampaign} ${replaceNullOrTempty(item.utmContent, `/ ${item.utmContent}`)} ${replaceNullOrTempty(item.utmKeyword, `/ ${item.utmKeyword}`)}</div>
                     </div>
                     <hr/>`
         });
@@ -122,10 +128,12 @@ class WebAccessDetailModel {
             return ` <li data-page='${past}'  class="page-item ${_this.page.currentPage === past ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${past}</a></li>
                                     <li data-page='${past + 1}' class="page-item ${_this.page.currentPage === (past + 1) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${past + 1}</a></li>
                                     <li data-page='${past + 2}' class="page-item ${_this.page.currentPage === (past + 2) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${past + 2}</a></li>`
-        } else {
+        } else if (_this.page >= 3) {
             return ` <li data-page='${_this.page.currentPage - 2}'  class="page-item ${_this.page.currentPage === (_this.page.currentPage - 2) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${_this.page.currentPage - 2}</a></li>
                                     <li data-page='${_this.page.currentPage - 1}' class="page-item ${_this.page.currentPage === (_this.page.currentPage - 1) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${_this.page.currentPage - 1}</a></li>
                                     <li data-page='${_this.page.currentPage}' class="page-item ${_this.page.currentPage === (_this.page.currentPage) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${_this.page.currentPage}</a></li>`
+        } else {
+            return `<li data-page='${_this.page.currentPage}' class="page-item ${_this.page.currentPage === (_this.page.currentPage) ? 'active' : ''}"><a class="page-link" href="javascript:void(0)">${_this.page.currentPage}</a></li>`
         }
     }
 }

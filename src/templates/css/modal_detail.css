@@ -1,0 +1,29 @@
+div.modal_detail div.card {
+    border-bottom: 1px solid #e1e4e4;
+    margin-bottom: 10px;
+}
+
+div.modal_detail a,
+div.modal_detail b {
+    font-size: 15px;
+}
+
+.modal_detail .item {
+    padding: 0px 15px;
+}
+
+.modal_detail .page-link {
+    padding: 0.26rem 0.75rem !important;
+}
+
+.modal_detail .page-input {
+    padding: 0.12rem 0.75rem;
+}
+
+.modal_detail .page-label {
+    padding: 0.3rem 0rem;
+}
+
+.modal_detail div.card-body hr:last-child {
+    display: none;
+}

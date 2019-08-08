@@ -1,0 +1,41 @@
+.customer_info .col-2 {
+    padding: 0 !important;
+}
+
+.customer_info .col-3 {
+    padding-right: 0 !important;
+    padding-left: 6px !important;
+}
+
+.customer_info {
+    font-size: 12px;
+}
+
+.customer_info .header-righ div {
+    float: right;
+}
+
+.customer_info .header-righ i.fas {
+    margin-left: 20px;
+}
+
+div.customer_update .row {
+    margin: 0;
+}
+
+div.customer_update select {
+    width: 100%;
+}
+
+div.alert-form {
+    position: fixed;
+    left: 0;
+    right: 11px;
+    display: none;
+    bottom: 0;
+}
+
+div.customer_update button {
+    font-size: 1rem !important;
+    width: 100px;
+}

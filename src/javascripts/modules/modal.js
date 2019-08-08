@@ -1,8 +1,13 @@
-
-import { render, renderSelect2 } from '../../javascripts/lib/helpers'
+import {
+    render,
+    renderSelect2,
+} from '../../javascripts/lib/helpers'
 import WebAccessDetailModel from '../../templates/modal/web_access_detail'
-import { ticketCreateModal, initCreateTicketFunction } from '../../templates/modal/ticket_create'
+import CustomerUpdate from '../../templates/modal/customer_update'
 import WebAccessChart from '../../templates/modal/web_access_chart'
+import {
+    _initModal
+} from '../../templates/customer_info'
 import 'select2'
 import o2oApi from '../../api/o2oApi';
 class Modal {
@@ -10,27 +15,27 @@ class Modal {
         this.state = {};
         this.typeModal = "typeModal";
         this.handleModal = this._handleModal.bind(this);
-        this.handleDataUserTicket = this._handleDataUserTicket.bind(this);
+        this.initModal = _initModal.bind(this);
         this._client = client;
         this._appData = appData;
+        this._content = "";
         client.on('template_getting_type', (template_getting_type) => {
-            debugger;
+            this.dataUser = template_getting_type.dataUser ? template_getting_type.dataUser : {}
+            this._content = template_getting_type.content ? template_getting_type.content : '';
             this._parentClient = client.instance(template_getting_type.parentGuid);
-            this.initializePromise = this.init(template_getting_type.type);
             this.o2oApi = new o2oApi(template_getting_type.o2oApi.token, template_getting_type.o2oApi.leadId);
             this.webAccessedModal = new WebAccessDetailModel(this.o2oApi);
             this.webAccessChart = new WebAccessChart(template_getting_type.type_chart);
+            this.customerUpdate = new CustomerUpdate(this._client, this.dataUser, this.o2oApi, this._parentClient);
+            this.initializePromise = this.init(template_getting_type.type);
         });
     }
 
     async init(type) {
-        let ticketInfo = (await this._parentClient.get('ticket'));
-        render('loader', await this.handleModal(type, ticketInfo), () => {
-            if (type === 'create_ticket') {
-                renderSelect2('#assignee', { templateResult: this.templateAssign });
-                renderSelect2('#type, #piority');
-                renderSelect2('#tags', { tags: true });
-                initCreateTicketFunction(this._client);
+        // let ticketInfo = (await this._parentClient.get('ticket'));
+        render('loader', await this.handleModal(type), () => {
+            if (type === 'customer_update') {
+                this.customerUpdate.init();
             }
             if (type === 'web_access_log') {
                 renderSelect2('#itemperpages');
@@ -40,15 +45,22 @@ class Modal {
             if (type === 'web_access_chart') {
                 this.webAccessChart.init();
             }
+            if (type === 'confirm_sync') {
+                this.initModal();
+
+            }
         });
     }
-    async _handleModal(type, data) {
+    async _handleModal(type) {
         switch (type) {
-            case 'web_access_log': return await this.webAccessedModal.render();
-            case 'web_access_chart': return await this.webAccessChart.render();
-            case 'create_ticket': return ticketCreateModal(data, this);
-            // case 'filter_modal': return null; break;
-            default: return await this.webAccessedModal.render();
+            case 'web_access_log':
+                return await this.webAccessedModal.render();
+            case 'web_access_chart':
+                return await this.webAccessChart.render();
+            case 'customer_update':
+                return await this.customerUpdate.render();
+            default:
+                return this._content;
         }
     }
     templateAssign(state) {
@@ -57,11 +69,6 @@ class Modal {
         );
         return $state;
     }
-    async _handleDataUserTicket() {
-        var ticket =  (await this._client.get('ticket')).ticket.requester;
-        var user = (await this._client.get('user')).user; 
-    }
-
 }
 
 export default Modal

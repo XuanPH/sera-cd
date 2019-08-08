@@ -1,0 +1,28 @@
+div.web_access .accessed-first,
+div.web_access .accessed-last,
+a {
+    font-size: 12px;
+}
+
+div.web_access span.time-gray {
+    color: #969696;
+}
+
+div.web_access .view_more {
+    padding: 0px 5px;
+    text-align: right;
+    font-size: 11px;
+}
+
+div.web_access .view_more a {
+    font-size: 10px;
+}
+
+/* chart modal */
+div.chart_modal h1 {
+    text-align: center !important;
+}
+
+div.chart_modal {
+    margin-right: 0;
+}

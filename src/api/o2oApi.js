@@ -1,4 +1,8 @@
-import { getLocalStorage, setLocalStorage } from "../javascripts/lib/helpers";
+import {
+    getLocalStorage,
+    setLocalStorage,
+    replaceNullOrTempty
+} from "../javascripts/lib/helpers";
 import * as axios from 'axios';
 
 const BASE_URL = `https://api.gtmjs.com/api/zendesk`;
@@ -8,21 +12,24 @@ class o2oApi {
         this.leadId = leadId;
         this.token = token;
         this.config = {
-            headers: { 'token': token }
+            headers: {
+                'token': token
+            }
         }
         this.getLeadFromPhoneOrEmail = this._getLeadFromPhoneOrEmail.bind(this);
         this.getInteractionHistory = this._getInteractionHistory.bind(this);
         this.getLeadData = this._getLeadData.bind(this);
         this.getDetailHistoryWebAccess = this._getDetailHistoryWebAccess.bind(this);
         this.getLeadActivities = this._getLeadActivities.bind(this);
+        this.getCommonData = this._getCommonData.bind(this);
+        this.updateLead = this._updateLead.bind(this);
     }
     _getInteractionHistory() {
         return {
             "from": 0,
             "size": 10,
             "total": 5,
-            "data": [
-                {
+            "data": [{
                     "id": "5d3fba40c864430010c42c82",
                     "type": "edit",
                     "note": "",
@@ -94,13 +101,23 @@ class o2oApi {
 
     async _getLeadFromPhoneOrEmail(zenUser) {
         try {
-            const res = await axios.get(`${BASE_URL}/lead?phone=${zenUser.phone}&email=${zenUser.email}`, this.config);
-            // const res = await axios.post(`${BASE_URL}/lead`,zenUser, this.config);
+            // const res = await axios.get(`${BASE_URL}/lead?phone=${zenUser.phone}&email=${zenUser.email}`, this.config);
+            zenUser.zendeskId = zenUser.id;
+            zenUser.fullName = zenUser.name;
+            var param = _.pick(zenUser, ['zendeskId', 'fullName', 'email', 'phone']);
+            const res = await axios.post(`${BASE_URL}/lead`, param, this.config);
+            if (res.status === 204) {
+                throw res;
+            }
             return res;
         } catch (err) {
-            debugger;
-            if (err.response && err.response.status === 401){
+            if (err.response && err.response.status === 401) {
                 throw "We can't authorize your token! please make sure your token is correct"
+            } else if (err.status === 204) {
+                throw {
+                    code: 'createdLead',
+                    msg: "Creating lead..."
+                }
             } else {
                 throw "We can't connect to server please check your network or contact our team contact@twin.vn"
             }
@@ -120,40 +137,41 @@ class o2oApi {
                     email: data.info.email,
                     name: data.info.fullName,
                     gender: data.gender.dataValue,
-                    zen_req_id: zenUser.id
-                }
-
-                var customer_care_info = {
+                    zen_req_id: zenUser.id,
+                    id: data.info.id,
                     care_status: data.info.status,
-                    sales_man: data.saleman.email,
+                    care_status_id: data.statusId || '',
                     take_note: data.info.note,
                     tags_keywords: data.info.utmKeyword,
                     appointment_time: data.calendar.startTime,
-                    zen_req_id: zenUser.id
+                    sales_man: data.saleman.email,
+                    sales_man_id: data.saleman.id,
+                    sales_man_full_name: replaceNullOrTempty(data.saleman.firstName) + replaceNullOrTempty(data.saleman.lastName)
                 }
-
                 var digital_source_info = {
-                    conversion: data.o2oTracking.statistics.goalNames,
-                    source_medium: data.o2oTracking.statistics.utmSourceMediums,
-                    campaign_name: data.o2oTracking.statistics.utmCampaigns,
-                    keywords_terms: [...data.o2oTracking.statistics.utmKeywords, ...data.o2oTracking.statistics.utmTerms],
+                    conversion: data.o2oTracking.statistics.goalNames ? data.o2oTracking.statistics.goalNames : '',
+                    source_medium: data.o2oTracking.statistics.utmSourceMediums ? data.o2oTracking.statistics.utmSourceMediums : '',
+                    campaign_name: data.o2oTracking.statistics.utmCampaigns ? data.o2oTracking.statistics.utmCampaigns : '',
+                    keywords_terms: [...(data.o2oTracking.statistics.utmKeywords ? data.o2oTracking.statistics.utmKeywords : []), ...(data.o2oTracking.statistics.utmTerms ? data.o2oTracking.statistics.utmTerms : [])],
                     zen_req_id: zenUser.id
                 }
 
                 var web_access = {
-                    first_web_access_time: data.o2oTracking.statistics.firstAccess,
-                    last_web_access_time: data.o2oTracking.statistics.lastAccess,
+                    first_web_access_time: data.o2oTracking.statistics.firstAccess ? data.o2oTracking.statistics.firstAccess : '',
+                    last_web_access_time: data.o2oTracking.statistics.lastAccess ? data.o2oTracking.statistics.lastAccess : '',
                     zen_req_id: zenUser.id
                 }
 
                 return {
                     customer_info,
-                    customer_care_info,
                     digital_source_info,
                     web_access
                 }
             } catch (error) {
-                return {err : true, msg : error};
+                return {
+                    err: true,
+                    msg: error
+                };
             }
         }
     }
@@ -166,6 +184,7 @@ class o2oApi {
             console.error(err);
         }
     }
+
     async _getLeadActivities(lastId = 0, filterType = ["all"]) {
         try {
             var body = {
@@ -180,6 +199,23 @@ class o2oApi {
         }
     }
 
+    async _getCommonData() {
+        try {
+            const res = await axios.get(`${BASE_URL}/All/get`, this.config);
+            return res;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async _updateLead(data) {
+        try {
+            const res = await axios.put(`${BASE_URL}/lead`, data, this.config);
+            return res;
+        } catch (err) {
+            console.error(err);
+        }
+    }
 }
 
 export default o2oApi
@@ -189,8 +225,7 @@ export function filterItem() {
     if (existsFilterLocal)
         return existsFilterLocal;
     //init when open app
-    var defaultFilterItem = [
-        {
+    var defaultFilterItem = [{
             text: 'All',
             value: 'all',
         },

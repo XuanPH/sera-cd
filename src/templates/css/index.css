@@ -1,0 +1,198 @@
+/* common css */
+body {
+  font-family: "Roboto", sans-serif;
+}
+
+.loader {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+}
+
+.main {
+  margin-right: 10px;
+}
+
+.data {
+  color: #363;
+  padding-left: 6px;
+}
+
+#content td {
+  font-size: 12px;
+  padding-top: 2px;
+}
+
+.card .card-header {
+  font-size: 14px !important;
+}
+
+.card .card-body {
+  padding: 1.25rem 0;
+}
+
+.avatar {
+  vertical-align: middle;
+  width: 70px;
+  height: 70px;
+  max-width: 70px !important;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.text-center {
+  text-align: center;
+}
+
+span {
+  font-size: 12px;
+}
+
+span.info-name {
+  font-size: 15px !important;
+  font-weight: bold;
+}
+
+.sz15 {
+  font-size: 15px !important;
+}
+
+button {
+  font-size: 11px !important;
+}
+
+div.loading {
+  position: relative;
+  height: 400px;
+  background: #f2f2f240;
+}
+
+embed.loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.header-righ {
+  float: right;
+}
+
+.card {
+  border-bottom: none;
+  border-radius: 0;
+  margin-bottom: -1px;
+}
+
+.c-tag span {
+  font-size: 12px;
+}
+
+.c-tag {
+  margin: 2px 5px !important;
+  font-weight: 100;
+}
+
+.c-tag.c-tag--red {
+  background-color: #e34f32 !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.text-right {
+  text-align: right;
+}
+
+span.badge.open {
+  background: rgb(227, 79, 50);
+}
+
+span.badge.pending {
+  background: rgb(48, 145, 236);
+}
+
+span.badge.new {
+  background: rgb(255, 182, 72);
+}
+
+.select2-results span,
+.select2-results li {
+  font-size: 13px !important;
+}
+
+.marginTop15 {
+  margin-top: 15px;
+}
+
+.marginTop8 {
+  margin-top: 8px;
+}
+
+.margin15 {
+  margin: 15px;
+}
+
+.gray13 {
+  color: #403c3c;
+  font-size: 13px;
+}
+
+.gray15 {
+  color: #403c3c;
+  font-size: 15px !important;
+}
+
+/* not found  */
+.notfound div.bg_img {
+  left: 50%;
+  position: absolute;
+  top: 40%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 100%;
+  background: url(notfound.png);
+  height: 120px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.5;
+  text-align: center;
+}
+
+.notfound span {
+  transform: translate(50%, 50%);
+  font-size: 16px;
+}
+
+.notfound a {
+  font-size: 16px;
+}
+
+.notfound div.content {
+  padding: 20px 30px;
+  text-align: center;
+  position: absolute;
+}
+
+::placeholder {
+  color: #b0a9a9a3 !important;
+  font-weight: 100 !important;
+  font-style: italic;
+}
+
+.required {
+  color: red;
+}
+
+.loading-panel {
+  position: fixed;
+  width: 100%;
+  background: #ffffffc9;
+  height: 100%;
+  z-index: 9000;
+}

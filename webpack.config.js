@@ -39,7 +39,12 @@ module.exports = {
     app: [
       'babel-polyfill',
       './src/javascripts/locations/ticket_sidebar.js',
-      './src/index.css',
+      './src/templates/css/index.css',
+      './src/templates/css/customer_info.css',
+      './src/templates/css/interaction_history.css',
+      './src/templates/css/modal_detail.css',
+      './src/templates/css/popup_content.css',
+      './src/templates/css/web_access.css',
     ]
   },
   output: {
@@ -47,10 +52,11 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/assets')
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
-        use: { loader: 'babel-loader' }
+        use: {
+          loader: 'babel-loader'
+        }
       },
       {
         type: 'javascript/auto',
@@ -62,7 +68,12 @@ module.exports = {
         test: /\.(sass|scss|css|png|woff|woff2|eot|ttf|svg)$/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { url: false } },
+          {
+            loader: 'css-loader',
+            options: {
+              url: false
+            }
+          },
           'postcss-loader'
         ]
       }
@@ -85,9 +96,16 @@ module.exports = {
     }),
 
     // Copy over static assets
-    new CopyWebpackPlugin([
-      { from: 'src/manifest.json', to: '../', flatten: true },
-      { from: 'src/images/*', to: '.', flatten: true }
+    new CopyWebpackPlugin([{
+        from: 'src/manifest.json',
+        to: '../',
+        flatten: true
+      },
+      {
+        from: 'src/images/*',
+        to: '.',
+        flatten: true
+      }
     ]),
 
     new MiniCssExtractPlugin({

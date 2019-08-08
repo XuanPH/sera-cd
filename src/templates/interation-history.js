@@ -1,5 +1,5 @@
 import { addEventClickToElement, addEventShowHideHeader, templatingLoop, setLocalStorage, renderLoading, resizeContainer } from "../javascripts/lib/helpers";
-import { triggerOpenPopupFilter, triggerOpenPopupCreate, openCreateTicket } from "./modal/popup";
+import { triggerOpenPopupFilter } from "./modal/popup";
 import I18n from '../javascripts/lib/i18n'
 
 class InteractionHistory {

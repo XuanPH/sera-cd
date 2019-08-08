@@ -1,0 +1,107 @@
+ul.timeline {
+    list-style-type: none;
+    position: relative;
+}
+
+ul.timeline:before {
+    content: " ";
+    background: #d4d9df;
+    display: inline-block;
+    position: absolute;
+    left: 29px;
+    width: 2px;
+    top: 7px;
+    height: 100%;
+    z-index: 400;
+}
+
+ul.timeline p {
+    font-size: 12px;
+    margin: 0;
+}
+
+ul.timeline>li {
+    margin: 0px 0;
+    margin-left: 50px;
+    margin-right: 20px;
+    position: relative;
+    margin-bottom: 25px;
+}
+
+ul.timeline>li>div.icon-timeline {
+    background: white;
+    display: inline-block;
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid #92a0a0;
+    color: #92a0a0;
+    left: -24px;
+    z-index: 400;
+    font-size: 13px;
+    padding: 3px 3px;
+    margin-top: 7px;
+}
+
+ul.timeline>li>div>i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+ul.timeline i.fa-plus {
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+ul.dropdown-menu li {
+    padding: 6px 14px;
+    width: 210px;
+    border-bottom: 1px solid beige;
+}
+
+ul.dropdown-menu {
+    padding: 0;
+}
+
+
+div.custom-control {
+    padding-top: 0.4rem;
+    padding-left: 0px;
+}
+
+div.interaction_history ul.dropdown-menu li:hover {
+    background: #d1cbcb47;
+}
+
+div.interaction_history li a.small i {
+    display: none;
+    float: right;
+}
+
+div.interaction_history li.active-filter a.small i {
+    display: unset;
+}
+
+div.interaction_history label.custom-control-label {
+    color: black;
+}
+
+div.interaction_history li.active-filter label.custom-control-label {
+    color: #007bff;
+}
+
+div.interaction_history label.custom-control-label::before,
+div.interaction_history label.custom-control-label::after {
+    content: unset;
+}
+
+div.interaction_history ul.dropdown-menu button#cancelFilter {
+    width: 80px;
+}
+
+div.interaction_history ul.dropdown-menu button#applyFilter {
+    width: 80px;
+    float: right;
+}

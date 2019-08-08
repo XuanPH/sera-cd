@@ -1,8 +1,8 @@
-
-
 export function resizeContainer(client, max = Number.POSITIVE_INFINITY, ignoreMax = false) {
   const newHeight = !ignoreMax ? Math.max(document.body.clientHeight, max) : document.body.clientHeight
-  return client.invoke('resize', { height: newHeight })
+  return client.invoke('resize', {
+    height: newHeight
+  })
 }
 /**
  * Helper to render a dataset using the same template function
@@ -22,13 +22,14 @@ export function templatingLoop(set, getTemplate, initialValue = '') {
  * @param {String} replacedNodeSelector selector of the node to be replaced
  * @param {String} htmlString new html string to be rendered
  */
-export function render(replacedNodeSelector, htmlString, callback) {
+export function render(replacedNodeSelector, htmlString, callback, _client) {
   replacedNodeSelector = `.${replacedNodeSelector}`
   const fragment = document.createRange().createContextualFragment(htmlString)
   const replacedNode = document.querySelector(replacedNodeSelector)
 
   replacedNode.parentNode.replaceChild(fragment, replacedNode)
   callback && callback(replacedNode);
+  _client && resizeContainer(_client, 0, true);
 }
 
 /**
@@ -49,7 +50,9 @@ export function escapeSpecialChars(str) {
     '=': '&#x3D;'
   }
 
-  return str.replace(/[&<>"'`=]/g, function (m) { return escape[m] })
+  return str.replace(/[&<>"'`=]/g, function (m) {
+    return escape[m]
+  })
 }
 
 export function addEventClickToElement(querySelector, fn, callback) {
@@ -163,10 +166,15 @@ export function getLocalStorage(key, getAndRemove = false) {
   return null;
 }
 
-export function isNullOrTempty(data, replaceTrue = '', repaceFalse = '') {
+export function replaceNullOrTempty(data, replaceTrue = '', repaceFalse = '') {
   if (!data || data === '' || data === null) return repaceFalse;
   if (replaceTrue === '') return data;
   return replaceTrue;
+}
+
+export function isNullOrTempty(data) {
+  if (!data || data === '' || data === null) return true;
+  return false;
 }
 
 export function substrByNum(str, number, defaultLastPrefix = "...") {
@@ -176,12 +184,21 @@ export function substrByNum(str, number, defaultLastPrefix = "...") {
   return str
 }
 
-export function renderLoading(insideContent = false, selector = '', ) {
+export function renderLoading(insideContent = false, selector = '', _client = null) {
   if (insideContent) {
     $(selector).html('');
     $(selector).html(`<div style='height: 100px;width: 300px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`);
   } else {
     return `<div style='height: 100px;width: 300px;'><img class="loader" style='top: 30%;' src="spinner.gif" /></div>`
   }
+  _client && resizeContainer(_client, 0, true);
+}
 
+export function renderLoadingWithPanel() {
+  return `<div class='loading-panel'>${renderLoading()}</div>`
+}
+
+export function isValidEmail(email) {
+  let rString = /^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
+  return rString.test(email);
 }

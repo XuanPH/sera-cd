@@ -1,4 +1,8 @@
-import { addEventClickToElement, addEventShowHideHeader, setLocalStorage } from '../javascripts/lib/helpers';
+import {
+    addEventClickToElement,
+    addEventShowHideHeader,
+    setLocalStorage
+} from '../javascripts/lib/helpers';
 window.chartColors = {
     red: 'rgb(255, 99, 132)',
     orange: 'rgb(255, 159, 64)',
@@ -28,14 +32,15 @@ export function renderWebAccessed(leads) {
                         </div>
                         <div class="col-10 accessed-first">
                             <b>First accessed</b><br/>
-                            ${moment(leads.first_web_access_time).fromNow()} <span class='time-gray'>at ${moment(leads.first_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>
+
+                            ${leads.first_web_access_time !== '' ? (moment(leads.first_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.first_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
                         </div>
                         <div class="col-1">
                             <i class="fa fa-circle" aria-hidden="true" style='color:red'></i>
                         </div>
                         <div class="col-10 accessed-last">
                              <b>Last accessed</b><br/>
-                             ${moment(leads.last_web_access_time).fromNow()} <span class='time-gray'>at ${moment(leads.last_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>
+                            ${leads.last_web_access_time !== '' ? (moment(leads.last_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.last_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
                         </div>
                         <div class="col-1"></div>
                         <div class="col-10 marginTop8">
@@ -70,16 +75,14 @@ export function initChartVisitChart() {
         type: 'line',
         data: {
             labels: ["27 June", "29 June", "01 July", "03 July"],
-            datasets: [
-                {
-                    label: '#Visit times',
-                    data: [80, 30, 63, 20],
-                    backgroundColor: window.chartColors.blue,
-                    borderColor: window.chartColors.blue,
-                    fill: false,
-                    borderWidth: 3,
-                }
-            ]
+            datasets: [{
+                label: '#Visit times',
+                data: [80, 30, 63, 20],
+                backgroundColor: window.chartColors.blue,
+                borderColor: window.chartColors.blue,
+                fill: false,
+                borderWidth: 3,
+            }]
         },
         options: {
             scales: {
@@ -119,15 +122,13 @@ export function initChartPageView() {
         type: 'horizontalBar',
         data: {
             labels: ["anycar.vn/ford/ranger-n..", "anycar.vn/need-to-sell-card", "anycar.vn/contact-us", "anycar.vn/showroom-hanoi", "anycar.vn"],
-            datasets: [
-                {
-                    label: '#Page view',
-                    data: [10, 8, 5, 4, 3],
-                    backgroundColor: window.chartColors.yellow,
-                    borderColor: window.chartColors.yellow,
-                    borderWidth: 3,
-                }
-            ]
+            datasets: [{
+                label: '#Page view',
+                data: [10, 8, 5, 4, 3],
+                backgroundColor: window.chartColors.yellow,
+                borderColor: window.chartColors.yellow,
+                borderWidth: 3,
+            }]
         },
         options: {
             scales: {
@@ -146,7 +147,9 @@ export function initChartPageView() {
                     }
                 }],
             },
-            legend: { display: false },
+            legend: {
+                display: false
+            },
             maintainAspectRatio: false,
             tooltips: {
                 callbacks: {
@@ -220,7 +223,11 @@ export function openAccessLog() {
         var instanceGuid = modalContext['instances.create'][0].instanceGuid;
         var modalClient = _client.instance(instanceGuid);
         setTimeout(() => {
-            var passParams = { type: 'web_access_log', parentGuid: _client._instanceGuid, o2oApi: o2oApi };
+            var passParams = {
+                type: 'web_access_log',
+                parentGuid: _client._instanceGuid,
+                o2oApi: o2oApi
+            };
             modalClient.trigger('template_getting_type', passParams);
         }, 500);
     });
@@ -241,7 +248,12 @@ export function openChart(_this, e) {
         var instanceGuid = modalContext['instances.create'][0].instanceGuid;
         var modalClient = _client.instance(instanceGuid);
         setTimeout(() => {
-            var passParams = { type: 'web_access_chart', parentGuid: _client._instanceGuid, o2oApi: o2oApi, type_chart: type_chart };
+            var passParams = {
+                type: 'web_access_chart',
+                parentGuid: _client._instanceGuid,
+                o2oApi: o2oApi,
+                type_chart: type_chart
+            };
             modalClient.trigger('template_getting_type', passParams);
         }, 500);
     });
