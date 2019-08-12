@@ -3,11 +3,15 @@ import {
   addEventShowHideHeader,
   setLocalStorage,
   replaceNullOrTempty,
-  renderLoading
+  renderLoading,
+  isNullOrTempty
 } from '../javascripts/lib/helpers'
 import {
   openUpdateCusomer
 } from './modal/popup'
+import {
+  update
+} from 'tcomb';
 
 
 export class CustomerInfo {
@@ -19,7 +23,6 @@ export class CustomerInfo {
   }
 
   render(leads) {
-    ;
     this.leads = leads;
     return `<div class="card customer_info">
         <h5 class="card-header">
@@ -33,14 +36,18 @@ export class CustomerInfo {
             </div>
 
             <div>
-              <i class="fas fa-pen pointer"  id='openUpdateType'></i>
+              <i class="fas fa-pen pointer" id='dropdownEdit' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+              <div class="dropdown-menu" aria-labelledby="dropdownEdit">
+              <a class="dropdown-item"  id='openUpdateType'  data-type='from' href="#"> + Care infomation</a>
+              <a class="dropdown-item" id='openUpdateInterest' data-type='to' href="#"> + Interest infomation</a>
+            </div>
             </div>
 
             <div>
               <i class="fas fa-sync pointer"  id='dropdownSync' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
               <div class="dropdown-menu" aria-labelledby="dropdownSync">
-                  <a class="dropdown-item syncData" data-type='from' href="#"> + Sync from O2O</a>
-                  <a class="dropdown-item syncData" data-type='to' href="#"> + Sync to O2O</a>
+                  <a class="dropdown-item syncData" data-type='from' href="#"> + O2O <i style='margin-left: 0' class="fas fa-long-arrow-alt-right"></i> Zendesk</a>
+                  <a class="dropdown-item syncData" data-type='to' href="#"> + Zendesk <i style='margin-left: 0'  class="fas fa-long-arrow-alt-right"></i> O2O</a>
               </div>
             </div>
           </div>
@@ -70,22 +77,22 @@ export class CustomerInfo {
                     Care status <b>${leads.care_status}</b>
                 </div>
                 <div class="col-1">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user" title="Salesman"></i>
                 </div>
                 <div class="col-10 accessed-last">
-                    Salesman: <b>${leads.sales_man ? leads.sales_man : ''}</b>
+                    ${replaceNullOrTempty(leads.sales_man,`<b>${leads.sales_man_first_name} | ${leads.sales_man}</b>`,`<span><i>(Not available data)</i><span>`)}
                 </div>
                 <div class="col-1">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="fas fa-calendar-alt" data-toggle="tooltip" title="Have appointment at"></i>
                 </div>
-                <div class="col-10 accessed-last">
-                    Have appointment at <b>${moment(leads.appointment_time).format('hh:mm A DD MMMM YYYY')}</b>
+                <div class="col-10 accessed-last" data-a='${leads.appointment_time}'>
+                     ${replaceNullOrTempty(leads.appointment_time,`<b>${moment(leads.appointment_time).format('hh:mm A DD MMMM YYYY')}</b>`,`<span><i>(Not available data)</i><span>`)} 
                 </div>
                   <div class="col-1">
-                    <i class="far fa-clipboard"></i>
+                    <i class="far fa-clipboard" title="Take note" ></i>
                 </div>
                 <div class="col-10 accessed-last">
-                    Take note: ${leads.take_note ? leads.take_note : ''}
+                    ${replaceNullOrTempty(leads.take_note,leads.take_note,`<span><i>(Not available data)</i><span>`)}
                 </div>
                 <div class="col-1">
                 </div>
@@ -101,12 +108,11 @@ export class CustomerInfo {
   renderConfirmSync(type) {
     let _title = type === 'to' ? 'Confirm synchronization from Zendesk to O2O ?' : 'Confirm synchronization from O2O to Zendesk ?'
     return `
-          <div class='row' style='margin: 0;'>
+          <div class='row confirm_sync' style='margin: 0;'>
               <div class='col-12' style='text-align: center;'>
                 <h1>${_title}</h1>
               </div>  
-              <div class='col-12' style='text-align: center;    margin-top: 30px;'>
-              
+              <div class='col-12' style='text-align: center;margin-top: 30px;'>
               </div>
               <div class='col-6'>
               <button id='closeModal' style='font-size: 1rem !important;width: 100%;' type="button" class="btn btn-secondary btn-lg">Cancel</button>
@@ -117,11 +123,12 @@ export class CustomerInfo {
           </div>
       `
   }
+
   init(data) {
     let _client = this._client;
     let o2oApi = this.o2oApi;
-    let dataUser = this.dataUser;
-
+    this.dataUser = data;
+    console.log(this.dataUser)
     addEventClickToElement('#openTypeCreate1', (e) => {
       var subject = $(e.target).data().ticket_subject || 'unknown subject';
       data.subject = subject;
@@ -130,15 +137,43 @@ export class CustomerInfo {
       // triggerOpenPopupCreate(e, true, _client)
     });
     addEventClickToElement('#openUpdateType', (e) => {
-      this.dataUser = data;
-      openUpdateCusomer.bind(this).call();
+      let _client = this._client;
+      _client._instanceClients = {};
+      let o2oApi = this.o2oApi;
+      let dataUser = this.dataUser;
+      return _client.invoke('instances.create', {
+        location: 'modal',
+        url: 'assets/iframe.html',
+        size: {
+          width: '450px',
+          height: '550px'
+        }
+      }).then(function (modalContext) {
+        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
+        var modalClient = _client.instance(instanceGuid);
+        setTimeout(() => {
+          document.querySelector('.popup_create .fa-times').click();
+          var passParams = {
+            type: 'customer_update',
+            parentGuid: _client._instanceGuid,
+            o2oApi: o2oApi,
+            dataUser: dataUser
+          };
+          modalClient.trigger('template_getting_type', passParams);
+        }, 500);
+      });
     });
+
     addEventShowHideHeader('.customer_info', _client);
 
-    addEventClickToElement('.syncData', (e) => {
+    addEventClickToElement('.syncData', async (e) => {
       var type = $(e.target).data().type;
       let _this = this;
       let _client = this._client;
+      _client._instanceClients = {};
+      let dataUser = this.dataUser;
+      //let data = await this.o2oApi.updateZendeskUser(_client);
+      //console.log(data);
       return _client.invoke('instances.create', {
         location: 'modal',
         url: 'assets/iframe.html',
@@ -160,13 +195,47 @@ export class CustomerInfo {
           modalClient.trigger('template_getting_type', passParams);
         }, 1000);
       });
-    })
+    });
+    //event interecst show modal
+    addEventClickToElement('#openUpdateInterest', (e) => {
+      let _this = this;
+      var type = $(e.target).data().type;
+      let dataUser = _this.dataUser;
+      let _client = _this._client;
+      _client._instanceClients = {};
+      return _client.invoke('instances.create', {
+        location: 'modal',
+        url: 'assets/iframe.html',
+        size: {
+          width: '800px',
+          height: '600px'
+        }
+      }).then(function (modalContext) {
+        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
+        var modalClient = _client.instance(instanceGuid);
+
+        var passParams = {
+          type: 'interest_update',
+          parentGuid: _client._instanceGuid,
+          o2oApi: o2oApi,
+          dataUser: dataUser
+        };
+        setTimeout(() => {
+          modalClient.trigger('template_getting_type', passParams);
+        }, 1000);
+      });
+    });
+
     // listen event trigger from modal
     _client.on('data_modal_passing', (modalData) => {
-      console.log('data_modal_passing event called...');
-      if (modalData) {
+      if (modalData.toastr) {
+        modalData.toastrType ? toastr.success(modalData.message) : toastr.error(modalData.message);
+      }
+      if (modalData.reload) {
         renderLoading(true, '.main', _client);
-        window.location.reload(true)
+        setTimeout(() => {
+          window.location.reload(true);
+        }, 1000);
       }
     });
   }
@@ -175,11 +244,47 @@ export class CustomerInfo {
 export function _initModal() {
   let client = this._client;
   let parentClient = this._parentClient;
+  let o2oApi = this.o2oApi;
   addEventClickToElement('#closeModal', (e) => {
     client.invoke('destroy');
   });
-  addEventClickToElement('#saveData', (e) => {
-    parentClient.trigger('data_modal_passing', true);
-    client.invoke('destroy');
+  addEventClickToElement('#saveData', async (e) => {
+    renderLoading(true, '.confirm_sync');
+    var postData = this.dataUser;
+    var currentUser = {};
+    try {
+      currentUser = (await parentClient.get('ticket.requester'))['ticket.requester'];
+    } catch (err) {
+      currentUser = (await parentClient.get('user'))['user'];
+    }
+    var phone = _.filter(currentUser.identities, (o) => {
+      return o.type == 'phone_number'
+    })[0];
+    currentUser.phone = phone ? phone.value : '';
+    postData.fullName = currentUser.name;
+    postData.staffInCharge = postData.sales_man_id;
+    postData.status = postData.care_status_id;
+    postData.note = postData.take_note;
+    !isNullOrTempty(currentUser.phone) && (postData.phone = currentUser.phone);
+    !isNullOrTempty(currentUser.email) && (postData.email = postData.email);
+    var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
+    var passParams = {
+      "reload": true,
+      "toastr": true,
+      "toastrType": true,
+      "message": "Updated success"
+    };
+    if (!updateLead) {
+      var passParams = {
+        "reload": false,
+        "toastr": true,
+        "toastrType": false,
+        "message": "'Update failed! Try again'"
+      };
+    }
+    setTimeout(() => {
+      parentClient.trigger('data_modal_passing', passParams);
+      client.invoke('destroy');
+    }, 1000);
   });
 }

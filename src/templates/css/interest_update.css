@@ -1,0 +1,33 @@
+div.interest_update .row {
+    margin: 0;
+}
+
+div.interest_update select {
+    width: 100%;
+}
+
+div.alert-form {
+    position: fixed;
+    left: 0;
+    right: 11px;
+    display: none;
+    bottom: 0;
+}
+
+div.interest_update button {
+    font-size: 1rem !important;
+    width: 100px;
+}
+
+div.interest_update .custom-radio {
+    padding-top: 0 !important;
+    padding-left: 1.5rem !important;
+    width: 100px;
+    margin: 10px;
+    border-radius: 5px;
+
+}
+
+.select2-results__option.select2-results__message {
+    text-align: center;
+}

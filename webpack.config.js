@@ -45,6 +45,7 @@ module.exports = {
       './src/templates/css/modal_detail.css',
       './src/templates/css/popup_content.css',
       './src/templates/css/web_access.css',
+      './src/templates/css/interest_update.css',
     ]
   },
   output: {
@@ -91,7 +92,7 @@ module.exports = {
       jQuery: 'jquery',
       jquery: 'jquery',
       'window.jQuery': 'jquery',
-      // 'Popper': 'popper.js/dist/umd/popper.min.js'
+      toastr: 'toastr',
       'Popper': 'popper.js/dist/umd/popper.min.js'
     }),
 

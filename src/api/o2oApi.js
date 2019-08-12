@@ -23,6 +23,8 @@ class o2oApi {
         this.getLeadActivities = this._getLeadActivities.bind(this);
         this.getCommonData = this._getCommonData.bind(this);
         this.updateLead = this._updateLead.bind(this);
+        this.referenceData = this._referenceData.bind(this);
+        this.updateZendeskUser = this._updateZendeskUser.bind(this);
     }
     _getInteractionHistory() {
         return {
@@ -146,7 +148,9 @@ class o2oApi {
                     appointment_time: data.calendar.startTime,
                     sales_man: data.saleman.email,
                     sales_man_id: data.saleman.id,
-                    sales_man_full_name: replaceNullOrTempty(data.saleman.firstName) + replaceNullOrTempty(data.saleman.lastName)
+                    sales_man_first_name: `${replaceNullOrTempty(data.saleman.firstName)}`.trim(),
+                    sales_man_last_name: `${replaceNullOrTempty(data.saleman.lastName)}`.trim(),
+                    interest: data.info.interest
                 }
                 var digital_source_info = {
                     conversion: data.o2oTracking.statistics.goalNames ? data.o2oTracking.statistics.goalNames : '',
@@ -211,6 +215,51 @@ class o2oApi {
     async _updateLead(data) {
         try {
             const res = await axios.put(`${BASE_URL}/lead`, data, this.config);
+            return res;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async _referenceData(type) {
+        let body = {
+            "from": 0,
+            "size": 200,
+            "query": {
+                "bool": {
+                    "must": [{
+                            "match": {
+                                "code": {
+                                    "query": type,
+                                    "operator": "and"
+                                }
+                            }
+                        },
+                        {
+                            "term": {
+                                "language": "vi"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        try {
+            const res = await axios.post(`${BASE_URL}/ReferenceData/GetByQuery`, body, this.config);
+            return res;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async _updateZendeskUser(_client) {
+        var endPoint = _client._origin;
+        try {
+            const res = await axios.get(`${endPoint}/api/v2/users.json`, {
+                headers: {
+                    'Authorization': `Basic ${getLocalStorage('apiToken') || ''}`
+                }
+            });
             return res;
         } catch (err) {
             console.error(err);

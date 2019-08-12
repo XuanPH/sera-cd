@@ -89,11 +89,40 @@ export function addEventShowHideHeader(component, client, callback) {
   }
 }
 
-export function renderSelect2(querySelector, defaultOption = {}) {
+export function renderSelect2(querySelector, defaultOption = {}, data = [], selectedData = []) {
   setTimeout(() => {
+    if (data && data.length > 0) {
+      $(querySelector).html('');
+      $(querySelector).html(templatingLoop(data, (item) => {
+        if (selectedData[item.code] && _.filter(selectedData[item.code], (o) => o === item.value).length > 0) {
+          return `<option value="${item.value}" selected>${item.value}</option>`
+        }
+        return `<option value="${item.value}">${item.value}</option>`
+      }));
+    }
     $(querySelector).select2(defaultOption);
   }, 200);
 }
+
+export function renderSelect2Tags(querySelector, data = []) {
+  setTimeout(() => {
+    if (data && data.length > 0) {
+      $(querySelector).html('');
+      $(querySelector).html(templatingLoop(data, (item) => {
+        return `<option value="${item}" selected>${item}</option>`
+      }));
+    }
+    $(querySelector).select2({
+      tags: true,
+      "language": {
+        "noResults": function () {
+          return "--- Input and press enter ---";
+        }
+      }
+    });
+  }, 200);
+}
+
 
 export function abbreviate_number(num, fixed) {
   if (num === null) {
@@ -166,10 +195,10 @@ export function getLocalStorage(key, getAndRemove = false) {
   return null;
 }
 
-export function replaceNullOrTempty(data, replaceTrue = '', repaceFalse = '') {
-  if (!data || data === '' || data === null) return repaceFalse;
-  if (replaceTrue === '') return data;
-  return replaceTrue;
+export function replaceNullOrTempty(data, replaceNotEmpty = '', repaceEmplty = '') {
+  if (!data || data === '' || data === null) return repaceEmplty;
+  if (replaceNotEmpty === '') return data;
+  return replaceNotEmpty;
 }
 
 export function isNullOrTempty(data) {
@@ -202,3 +231,19 @@ export function isValidEmail(email) {
   let rString = /^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/gm;
   return rString.test(email);
 }
+
+export function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+  try {
+    decimalCount = Math.abs(decimalCount);
+    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+    const negativeSign = amount < 0 ? "-" : "";
+
+    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+    let j = (i.length > 3) ? i.length % 3 : 0;
+
+    return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+  } catch (e) {
+    console.log(e)
+  }
+};

@@ -1,7 +1,8 @@
 import {
     addEventClickToElement,
     addEventShowHideHeader,
-    setLocalStorage
+    setLocalStorage,
+    isNullOrTempty
 } from '../javascripts/lib/helpers';
 window.chartColors = {
     red: 'rgb(255, 99, 132)',
@@ -27,40 +28,47 @@ export function renderWebAccessed(leads) {
             <div class="card-body">
                 <div class="container">
                     <div class="row">
-                        <div class="col-1">
-                            <i class="fa fa-circle" aria-hidden="true" style='color:green'></i>
-                        </div>
-                        <div class="col-10 accessed-first">
-                            <b>First accessed</b><br/>
+                        ${
+                            isNullOrTempty(leads.first_web_access_time) && isNullOrTempty(leads.last_web_access_time)
+                                ? `<div class="col-12"><span><i>(Not available data)</i></span></div>`
+                                : (
+                                    `<div class="col-1">
+                                        <i class="fa fa-circle" aria-hidden="true" style='color:green'></i>
+                                    </div>
+                                    <div class="col-10 accessed-first">
+                                        <b>First accessed</b><br/>
 
-                            ${leads.first_web_access_time !== '' ? (moment(leads.first_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.first_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
-                        </div>
-                        <div class="col-1">
-                            <i class="fa fa-circle" aria-hidden="true" style='color:red'></i>
-                        </div>
-                        <div class="col-10 accessed-last">
-                             <b>Last accessed</b><br/>
-                            ${leads.last_web_access_time !== '' ? (moment(leads.last_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.last_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
-                        </div>
-                        <div class="col-1"></div>
-                        <div class="col-10 marginTop8">
-                            <a href='#' id='viewDetail'>View detailed log accessed <i class="fas fa-long-arrow-alt-right"></i></a>
-                        </div>
-                        <div class="col-1"></div>
-                        <div class="col-11 marginTop8">
-                            <div class="c-tag"><span dir="ltr">Seen 10 pages</span></div>
-                            <div class="c-tag"><span dir="ltr">Accessed 70 times</span></div>
-                        </div>
-                        <div class="col-9 marginTop15 gray13">#Total visits 3 days ago </div>
-                        <div class="col-3 marginTop15 view_more"> <a data-type_chart='visit' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
-                        <div class='col-12 marginTop8'>
-                            <canvas id="visitChart" width="400" height="200"></canvas>
-                        </div>
-                         <div class="col-9 marginTop15 gray13">#Accessed/page 3 days ago </div>
-                        <div class="col-3 marginTop15 view_more"> <a data-type_chart='page_view' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
-                        <div class='col-12 marginTop8'>
-                            <canvas id="pageViewChart" width="400" height="200"></canvas>
-                        </div>
+                                        ${leads.first_web_access_time !== '' ? (moment(leads.first_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.first_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
+                                    </div>
+                                    <div class="col-1">
+                                        <i class="fa fa-circle" aria-hidden="true" style='color:red'></i>
+                                    </div>
+                                    <div class="col-10 accessed-last">
+                                        <b>Last accessed</b><br/>
+                                        ${leads.last_web_access_time !== '' ? (moment(leads.last_web_access_time).fromNow() + `<span class='time-gray'>at ${moment(leads.last_web_access_time).format('hh:mm A DD MMMM YYYY')}</span>`) : `<i>(unknow)</i>`} 
+                                    </div>
+                                    <div class="col-1"></div>
+                                    <div class="col-10 marginTop8">
+                                        <a href='#' id='viewDetail'>View detailed log accessed <i class="fas fa-long-arrow-alt-right"></i></a>
+                                    </div>
+                                    <div class="col-1"></div>
+                                    <div class="col-11 marginTop8">
+                                        <div class="c-tag"><span dir="ltr">Seen 10 pages</span></div>
+                                        <div class="c-tag"><span dir="ltr">Accessed 70 times</span></div>
+                                    </div>
+                                    <div class="col-9 marginTop15 gray13">#Total visits 3 days ago </div>
+                                    <div class="col-3 marginTop15 view_more"> <a data-type_chart='visit' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
+                                    <div class='col-12 marginTop8'>
+                                        <canvas id="visitChart" width="400" height="200"></canvas>
+                                    </div>
+                                    <div class="col-9 marginTop15 gray13">#Accessed/page 3 days ago </div>
+                                    <div class="col-3 marginTop15 view_more"> <a data-type_chart='page_view' href='javascript:void(0)' class='viewMore'>View more <i class="fas fa-long-arrow-alt-right"></i></a> </div>
+                                    <div class='col-12 marginTop8'>
+                                    <canvas id="pageViewChart" width="400" height="200"></canvas>
+                                    </div>`
+                                )
+                        }
+                        
                     </div>
                 </div>
             </div >
@@ -71,7 +79,7 @@ export function initChartVisitChart() {
     Chart.defaults.global.defaultFontColor = '#000000';
     Chart.defaults.global.defaultFontFamily = 'Arial';
     var visitChart = document.getElementById("visitChart");
-    var myChart = new Chart(visitChart, {
+    visitChart && new Chart(visitChart, {
         type: 'line',
         data: {
             labels: ["27 June", "29 June", "01 July", "03 July"],
@@ -118,7 +126,7 @@ export function initChartPageView() {
     Chart.defaults.global.defaultFontColor = '#000000';
     Chart.defaults.global.defaultFontFamily = 'Arial';
     var pageViewChart = document.getElementById("pageViewChart");
-    var myChart = new Chart(pageViewChart, {
+    pageViewChart && new Chart(pageViewChart, {
         type: 'horizontalBar',
         data: {
             labels: ["anycar.vn/ford/ranger-n..", "anycar.vn/need-to-sell-card", "anycar.vn/contact-us", "anycar.vn/showroom-hanoi", "anycar.vn"],

@@ -30,7 +30,13 @@
     "type": "text",
     "required": true,
     "secure": false,
-    "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJPMk8tQ1JNIiwiY29tcGFueUlkIjoiNWI2N2VkYWI5NjVlYWYwMDBkNDQ2YThlIiwic291cmNlIjoiNWI4YTZlMjZmMDk0MzQwMDBkNzI2Yjc5IiwiY2hhbmVsIjoiNWI4ZDFlMWNmNmM3MjAwMDBkNjY3NzVmIn0.mkBqRJ4wZYG8RwOkJ1CQIUKY4l1XOzOOf7UdBIOzFD4"
+    "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJPMk8tQ1JNIiwiY29tcGFueUlkIjoiNWI2N2VkYWI5NjVlYWYwMDBkNDQ2YThlIiwidGltZSI6MTU2NTU4MDExM30.fAlZa5r6NrJDb0ThcvA8LWxdtCwhFic7AiICjUfFEzc"
+  }, {
+    "name": "Zendesk-API-Tokens",
+    "type": "text",
+    "required": false,
+    "secure": false,
+    "default": "bybPG6ipeluoBdvWhoRUlqzpmZ1CI6ZgCeXKpIW2"
   }],
   "version": "1.0",
   "frameworkVersion": "2.0"

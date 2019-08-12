@@ -120,15 +120,18 @@ class CustomerUpdate {
                         $(".customer_update > div").before(renderLoadingWithPanel())
                         var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
                         if (updateLead) {
-                            $(".loading-panel").remove();
-                            this.notify('Update success', true);
-                            parentClient.trigger('data_modal_passing', true);
+                            toastr.success('Update success');
+                            var passParams = {
+                                "reload": true,
+                            };
+                            parentClient.trigger('data_modal_passing', passParams);
                             //client.invoke('destroy');
                         }
+                        $(".loading-panel").remove();
                     } catch (error) {
-                        this.notify('Something wrong when update lead, please try again', false);
+                        console.log('SERA-CD[Error]:' + error)
+                        toastr.error('Something wrong when update lead, please try again');
                     }
-
                 }
             }
         })
@@ -136,9 +139,9 @@ class CustomerUpdate {
     }
     async getCommonData() {
         let data = (await this.o2oApi.getCommonData()).data;
-        debugger;
         let careStatus = _.filter(data.commonData, (o) => !o.isDelete)
         let salesman = data.users;
+        let interests = data.interests;
         return {
             careStatus,
             salesman
@@ -160,7 +163,6 @@ class CustomerUpdate {
                 }, timeout);
             });
         }
-
     }
 }
 

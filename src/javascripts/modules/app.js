@@ -2,12 +2,10 @@ import I18n from '../../javascripts/lib/i18n'
 import {
   resizeContainer,
   render,
-  setLocalStorage
+  setLocalStorage,
+  getLocalStorage
 } from '../../javascripts/lib/helpers'
 import {
-  renderCustomerInfo,
-  openModalType,
-  initCustomerInfoFunction,
   CustomerInfo
 } from '../../templates/customer_info';
 import {
@@ -46,11 +44,14 @@ class App {
     this._client = client
     this._appData = appData
     this.o2oToken = appData.metadata.settings["O2O-Token"]
+    this.zendeskToken = appData.metadata.settings["Zendesk-API-Tokens"]
     this.states = {
       location: location
     }
     this.o2oApi = new o2oApi(this.o2oToken);
     setLocalStorage('token', this.o2oToken);
+    setLocalStorage('zendeskToken', this.zendeskToken);
+    ///this.saveToken(this.zendeskToken);
     this.initializePromise = this.init()
     this.initWebAccessedFunction = initWebAccessedFunction.bind(this);
     this.handleDataUserTicket = this._handleDataUserTicket.bind(this);
@@ -67,6 +68,7 @@ class App {
   async init() {
     const currentUser = (await this._client.get('currentUser')).currentUser
     this.states.currentUserName = currentUser.name
+    this.saveToken(currentUser);
     I18n.loadTranslations(currentUser.locale);
 
     const organizations = await this._client
@@ -77,7 +79,7 @@ class App {
     this.ticketSiderbar();
     this.newTicketSiderbar();
     //
-
+    debugger;
     const dataUser = this.getEmailAndPhoneFromZendeskUser(await this.handleDataUserTicket());
     if ((!dataUser.phone || dataUser.phone === '')) { // && (!dataUser.email || dataUser.email === '')) {
       render('loader', this.validateLead.render(), () => {
@@ -93,7 +95,6 @@ class App {
           // document.getElementById('openTypeCreate1').addEventListener('click', openModalType.bind(this));
           this.customerInfo.init(leads.customer_info);
         });
-
         render('digital_source_info', renderDSI(leads.digital_source_info), () => {
           initDSIFunction(this._client);
         });
@@ -160,7 +161,15 @@ class App {
       name: dataUser.name,
     }
   }
-
+  saveToken(currentUser) {
+    var email = currentUser.email;
+    var token = getLocalStorage('zendeskToken')
+    if (email && token) {
+      var stringDecode = `${email}/token:${token}`;
+      let base64String = btoa(stringDecode);
+      setLocalStorage("apiToken", base64String);
+    }
+  }
 }
 
 export default App

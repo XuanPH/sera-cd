@@ -5,6 +5,7 @@ import {
 import WebAccessDetailModel from '../../templates/modal/web_access_detail'
 import CustomerUpdate from '../../templates/modal/customer_update'
 import WebAccessChart from '../../templates/modal/web_access_chart'
+import InterestUpdate from '../../templates/modal/interest_update'
 import {
     _initModal
 } from '../../templates/customer_info'
@@ -27,8 +28,15 @@ class Modal {
             this.webAccessedModal = new WebAccessDetailModel(this.o2oApi);
             this.webAccessChart = new WebAccessChart(template_getting_type.type_chart);
             this.customerUpdate = new CustomerUpdate(this._client, this.dataUser, this.o2oApi, this._parentClient);
+            this.interestUpdate = new InterestUpdate(this._client, this.dataUser, this.o2oApi, this._parentClient);
             this.initializePromise = this.init(template_getting_type.type);
         });
+        setTimeout(() => {
+            if (!this.o2oApi) {
+                this._content = "We cant bind this form to zendesk, please refresh that page"
+                this.initializePromise = this.init("error");
+            }
+        }, 10000);
     }
 
     async init(type) {
@@ -47,7 +55,9 @@ class Modal {
             }
             if (type === 'confirm_sync') {
                 this.initModal();
-
+            }
+            if (type === 'interest_update') {
+                this.interestUpdate.init();
             }
         });
     }
@@ -59,6 +69,8 @@ class Modal {
                 return await this.webAccessChart.render();
             case 'customer_update':
                 return await this.customerUpdate.render();
+            case 'interest_update':
+                return await this.interestUpdate.render();
             default:
                 return this._content;
         }

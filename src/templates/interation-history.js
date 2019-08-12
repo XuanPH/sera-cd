@@ -1,5 +1,14 @@
-import { addEventClickToElement, addEventShowHideHeader, templatingLoop, setLocalStorage, renderLoading, resizeContainer } from "../javascripts/lib/helpers";
-import { triggerOpenPopupFilter } from "./modal/popup";
+import {
+  addEventClickToElement,
+  addEventShowHideHeader,
+  templatingLoop,
+  setLocalStorage,
+  renderLoading,
+  resizeContainer
+} from "../javascripts/lib/helpers";
+import {
+  triggerOpenPopupFilter
+} from "./modal/popup";
 import I18n from '../javascripts/lib/i18n'
 
 class InteractionHistory {
@@ -10,8 +19,8 @@ class InteractionHistory {
     this.activitiesData = [];
     this.lastId = 0;
     this.filterType = ["all"];
-    this.defaultFilter = [
-      {
+    this.getStatus = this._getStatus.bind(this);
+    this.defaultFilter = [{
         text: 'All',
         value: 'all',
       },
@@ -62,6 +71,7 @@ class InteractionHistory {
   }
 
   renderItem(item, index) {
+    let _this = this;
     if (item.botId && item.refIds && item.refIds.length) {
       return `<li>
               <div class='icon-timeline'></div>
@@ -91,8 +101,8 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.changeCalendar`)}</a>
-              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${item.previousStatus}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
-              <p>${I18n.t(`callLogs.to`)} ${item.currentStatusValue ? `<b>${item.currentStatusValue}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -104,8 +114,8 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.changeStatusLead`)}</a>
-              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${item.previousStatus}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
-              <p>${I18n.t(`callLogs.to`)} ${item.currentStatusValue ? `<b>${item.currentStatusValue}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -196,7 +206,8 @@ class InteractionHistory {
                 <a data-ticket_subject='${I18n.t(`callLogs.allocateLead`)}' class="dropdown-item add_ticket" href="#"> + Create ticket</a>
               </div>
             </li>`;
-      default: return `<li>
+      default:
+        return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`responseSale.${item.currentStatus}`)}</a>
               ${item.note ? `<p>${item.note}</p>` : ''}
@@ -212,6 +223,7 @@ class InteractionHistory {
   }
 
   render() {
+
     return `<div class="card interaction_history">
         <h5 class="card-header">
           <i class="fas fa-chevron-up showHide pointer"></i> Interaction history
@@ -259,12 +271,12 @@ class InteractionHistory {
   }
 
   renderList() {
-    
+
     let dataUser = this.leads;
     let _client = this._client;
 
     $("ul.timeline").html('');
-    $('ul.timeline').html(templatingLoop(this.activitiesData, this.renderItem));
+    $('ul.timeline').html(templatingLoop(this.activitiesData, this.renderItem.bind(this)));
 
     addEventClickToElement('ul.timeline .add_ticket', (e) => {
       var subject = $(e.target).data().ticket_subject || 'unknown subject';
@@ -278,11 +290,13 @@ class InteractionHistory {
   async read(isOverride) {
     renderLoading(true, 'ul.timeline');
     let response = (await this.o2oApi.getLeadActivities(this.lastId, this.filterType)).data;
+    this.commonData = (await this.o2oApi.getCommonData()).data.commonData;
+    console.log(this.commonData);
     this.lastId = this.lastId += response.size;
     if (response && response.data && response.data.length > 0) {
       if (isOverride !== true) {
         this.activitiesData = _.union(this.activitiesData, response.data);
-      }else {
+      } else {
         this.activitiesData = response.data;
       }
     }
@@ -296,9 +310,13 @@ class InteractionHistory {
     let _client = this._client;
     this.leads = leads;
 
-    addEventClickToElement('#openTypeFilter', (e) => { triggerOpenPopupFilter(e, true, _client) });
+    addEventClickToElement('#openTypeFilter', (e) => {
+      triggerOpenPopupFilter(e, true, _client)
+    });
 
-    addEventClickToElement('#interactionLoadMore', (e) => {this.read();})
+    addEventClickToElement('#interactionLoadMore', (e) => {
+      this.read();
+    })
 
     addEventShowHideHeader('.interaction_history', _client);
 
@@ -311,12 +329,16 @@ class InteractionHistory {
       if ((idx = options.indexOf(val)) > -1) {
         options.splice(idx, 1);
         $target.removeClass('active-filter');
-        setTimeout(function () { $inp.prop('checked', false) }, 0);
+        setTimeout(function () {
+          $inp.prop('checked', false)
+        }, 0);
       } else {
         if (val)
           options.push(val);
         $target.addClass('active-filter');
-        setTimeout(function () { $inp.prop('checked', true) }, 0);
+        setTimeout(function () {
+          $inp.prop('checked', true)
+        }, 0);
       }
       $(event.target).blur();
       return false;
@@ -326,24 +348,32 @@ class InteractionHistory {
 
 
     $("#applyFilter").on('click', (e) => {
-      if (options && options.length > 0){
-        this.filterType = _.filter(options, (o) => { return o && o !== null });
+      if (options && options.length > 0) {
+        this.filterType = _.filter(options, (o) => {
+          return o && o !== null
+        });
         this.lastId = 0;
         this.read(true);
         $("button#applyFilter").closest('ul').removeClass('show')
       }
-    }); 
+    });
 
     $("#cancelFilter").on('click', async (e) => {
       await $("li.active-filter").trigger('click');
-      this.filterType.forEach((item, index) =>{
-        let elemtn =  $(`a[data-value=${item}]`).closest('li');
+      this.filterType.forEach((item, index) => {
+        let elemtn = $(`a[data-value=${item}]`).closest('li');
         if (!elemtn.hasClass('active-filter'))
           elemtn.trigger('click');
       });
       options = this.filterType;
       $("button#applyFilter").closest('ul').removeClass('show')
     });
+  }
+  _getStatus(id) {
+    var status = _.filter(this.commonData, (o) => o.id === id)[0];
+    if (status)
+      return status.dataValue
+    return I18n.t(`callLogs.notStatus`)
   }
 }
 
