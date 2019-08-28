@@ -1,81 +1,82 @@
-const path = require('path')
-const webpack = require('webpack')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const TranslationsPlugin = require('./webpack/translations-plugin')
-const devDependencies = require('./package.json').devDependencies
-
+const path = require("path");
+const webpack = require("webpack");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TranslationsPlugin = require("./webpack/translations-plugin");
+const devDependencies = require("./package.json").devDependencies;
+var WebpackClearConsole = require("webpack-clear-console").WebpackClearConsole;
 // this function reads Zendesk Garden npm dependencies from package.json and
 // creates a jsDelivr url
-const zendeskGardenJsDelivrUrl = (function () {
-  const pkg = Object.keys(devDependencies).filter(item => item.includes('@zendeskgarden/css'))
+const zendeskGardenJsDelivrUrl = (function() {
+  const pkg = Object.keys(devDependencies).filter(item =>
+    item.includes("@zendeskgarden/css")
+  );
   const getPkgName = (url, pkg) => {
     const version = devDependencies[pkg]
-      .replace(/^[\^~]/g, '')
-      .replace(/\.\d$/, '')
-    url = `${url}npm/${pkg}@${version},`
-    return url
-  }
-  return pkg.length && pkg.reduce(
-    getPkgName,
-    'https://cdn.jsdelivr.net/combine/'
-  ).slice(0, -1)
-}())
+      .replace(/^[\^~]/g, "")
+      .replace(/\.\d$/, "");
+    url = `${url}npm/${pkg}@${version},`;
+    return url;
+  };
+  return (
+    pkg.length &&
+    pkg.reduce(getPkgName, "https://cdn.jsdelivr.net/combine/").slice(0, -1)
+  );
+})();
 
 const externalAssets = {
-  css: [
-    zendeskGardenJsDelivrUrl,
-  ],
+  css: [zendeskGardenJsDelivrUrl],
   js: [
-    'https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'
+    "https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
   ]
-}
+};
 
 module.exports = {
   entry: {
     app: [
-      'babel-polyfill',
-      './src/javascripts/locations/ticket_sidebar.js',
-      './src/templates/css/index.css',
-      './src/templates/css/customer_info.css',
-      './src/templates/css/interaction_history.css',
-      './src/templates/css/modal_detail.css',
-      './src/templates/css/popup_content.css',
-      './src/templates/css/web_access.css',
-      './src/templates/css/interest_update.css',
+      "babel-polyfill",
+      "./src/javascripts/locations/ticket_sidebar.js",
+      "./src/templates/css/index.css",
+      "./src/templates/css/customer_info.css",
+      "./src/templates/css/interaction_history.css",
+      "./src/templates/css/modal_detail.css",
+      "./src/templates/css/popup_content.css",
+      "./src/templates/css/web_access.css",
+      "./src/templates/css/interest_update.css"
     ]
   },
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist/assets')
+    filename: "[name].js",
+    path: path.resolve(__dirname, "dist/assets")
   },
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.js$/,
         use: {
-          loader: 'babel-loader'
+          loader: "babel-loader"
         }
       },
       {
-        type: 'javascript/auto',
+        type: "javascript/auto",
         test: /\.json$/,
-        include: path.resolve(__dirname, './src/translations'),
-        use: './webpack/translations-loader'
+        include: path.resolve(__dirname, "./src/translations"),
+        use: "./webpack/translations-loader"
       },
       {
         test: /\.(sass|scss|css|png|woff|woff2|eot|ttf|svg)$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               url: false
             }
           },
-          'postcss-loader'
+          "postcss-loader"
         ]
       }
     ]
@@ -83,46 +84,50 @@ module.exports = {
 
   plugins: [
     // Empties the dist folder
-    new CleanWebpackPlugin(['dist/*']),
+    new CleanWebpackPlugin(["dist/*"]),
 
     //
     new webpack.ProvidePlugin({
-      _: 'lodash',
-      $: 'jquery',
-      jQuery: 'jquery',
-      jquery: 'jquery',
-      'window.jQuery': 'jquery',
-      toastr: 'toastr',
-      'Popper': 'popper.js/dist/umd/popper.min.js'
+      _: "lodash",
+      $: "jquery",
+      jQuery: "jquery",
+      jquery: "jquery",
+      "window.jQuery": "jquery",
+      toastr: "toastr",
+      Popper: "popper.js/dist/umd/popper.min.js"
     }),
 
     // Copy over static assets
-    new CopyWebpackPlugin([{
-        from: 'src/manifest.json',
-        to: '../',
+    new CopyWebpackPlugin([
+      {
+        from: "src/manifest.json",
+        to: "../",
         flatten: true
       },
       {
-        from: 'src/images/*',
-        to: '.',
+        from: "src/images/*",
+        to: ".",
         flatten: true
       }
     ]),
 
     new MiniCssExtractPlugin({
-      filename: '[name].css'
+      filename: "[name].css"
     }),
 
     new TranslationsPlugin({
-      path: path.resolve(__dirname, './src/translations')
+      path: path.resolve(__dirname, "./src/translations")
     }),
 
     new HtmlWebpackPlugin({
-      warning: 'AUTOMATICALLY GENERATED FROM ./src/templates/iframe.html - DO NOT MODIFY THIS FILE DIRECTLY',
+      warning:
+        "AUTOMATICALLY GENERATED FROM ./src/templates/iframe.html - DO NOT MODIFY THIS FILE DIRECTLY",
       vendorCss: externalAssets.css.filter(path => !!path),
       vendorJs: externalAssets.js,
-      template: './src/templates/iframe.html',
-      filename: 'iframe.html'
-    })
+      template: "./src/templates/iframe.html",
+      filename: "iframe.html"
+    }),
+
+    new WebpackClearConsole()
   ]
-}
+};

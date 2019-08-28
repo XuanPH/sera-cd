@@ -61,6 +61,7 @@
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "select2": "^4.0.8",
-    "toastr": "^2.1.4"
+    "toastr": "^2.1.4",
+    "webpack-clear-console": "^1.0.3"
   }
 }

@@ -6,7 +6,9 @@ var client = ZAFClient.init();
 client.on("app.registered", function(appData) {
   return init(appData.context.location, client, appData);
 });
-
+client.on("app.willDestroy", function(appData) {
+  clearInterval();
+});
 // client.on('instances', function (data) {
 //   var instanceGuids = Object.keys(data.instances);
 //   Object.keys(data.instances).forEach(function (instanceGuid) {
