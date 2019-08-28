@@ -5,14 +5,9 @@ import {
   replaceNullOrTempty,
   renderLoading,
   isNullOrTempty
-} from '../javascripts/lib/helpers'
-import {
-  openUpdateCusomer
-} from './modal/popup'
-import {
-  update
-} from 'tcomb';
-
+} from "../javascripts/lib/helpers";
+import { openUpdateCusomer } from "./modal/popup";
+import { update } from "tcomb";
 
 export class CustomerInfo {
   constructor(params) {
@@ -46,7 +41,7 @@ export class CustomerInfo {
             <div>
               <i class="fas fa-sync pointer"  id='dropdownSync' data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
               <div class="dropdown-menu" aria-labelledby="dropdownSync">
-                  <a class="dropdown-item syncData" data-type='from' href="#"> + O2O <i style='margin-left: 0' class="fas fa-long-arrow-alt-right"></i> Zendesk</a>
+                  <a style='display:none' class="dropdown-item syncData" data-type='from' href="#"> + O2O <i style='margin-left: 0' class="fas fa-long-arrow-alt-right"></i> Zendesk</a>
                   <a class="dropdown-item syncData" data-type='to' href="#"> + Zendesk <i style='margin-left: 0'  class="fas fa-long-arrow-alt-right"></i> O2O</a>
               </div>
             </div>
@@ -56,15 +51,26 @@ export class CustomerInfo {
           <div class="container">
             <div class="row">
               <div class="col-4">
-                <img src="https://assets.zendesk.com/images/2016/default-avatar-80.png" alt="Avatar" class="avatar">
+                <img src="https://ui-avatars.com/api/?name=${
+                  leads.name
+                }&rounded=true&size=64&color=ff0000&bold=true alt="Avatar" class="avatar">
               </div>
               <div class="col-8">
                 <span class="info-name">${leads.name}</span><br/>
-                ${replaceNullOrTempty(leads.email, `<span style="color: cornflowerblue;">${leads.email}</span>`, '<span><i>(Email not avaialbe)</i></span>')}<br/>
+                ${replaceNullOrTempty(
+                  leads.email,
+                  `<span style="color: cornflowerblue;">${leads.email}</span>`,
+                  "<span><i>(Email not avaialbe)</i></span>"
+                )}<br/>
                 <span style="color: cornflowerblue;">
-                  ${replaceNullOrTempty(leads.phone, (leads.phone + `&nbsp;&nbsp;<a href='tel:${leads.phone}'>
+                  ${replaceNullOrTempty(
+                    leads.phone,
+                    leads.phone +
+                      `&nbsp;&nbsp;<a href='tel:${leads.phone}'>
                     <i class="fas fa-phone-volume"></i></a>&nbsp;&nbsp;<a href='tel:${leads.phone}'>
-                    <i class="fas fa-comment-dots" ></i></a>`), '')}
+                    <i class="fas fa-comment-dots" ></i></a>`,
+                    ""
+                  )}
                   </span>
               </div >
             </div >
@@ -80,33 +86,58 @@ export class CustomerInfo {
                     <i class="fas fa-user" title="Salesman"></i>
                 </div>
                 <div class="col-10 accessed-last">
-                    ${replaceNullOrTempty(leads.sales_man,`<b>${leads.sales_man_first_name} | ${leads.sales_man}</b>`,`<span><i>(Not available data)</i><span>`)}
+                    ${replaceNullOrTempty(
+                      leads.sales_man,
+                      `<b>${leads.sales_man_first_name} | ${leads.sales_man}</b>`,
+                      `<span><i>(Not available data)</i><span>`
+                    )}
                 </div>
                 <div class="col-1">
                     <i class="fas fa-calendar-alt" data-toggle="tooltip" title="Have appointment at"></i>
                 </div>
-                <div class="col-10 accessed-last" data-a='${leads.appointment_time}'>
-                     ${replaceNullOrTempty(leads.appointment_time,`<b>${moment(leads.appointment_time).format('hh:mm A DD MMMM YYYY')}</b>`,`<span><i>(Not available data)</i><span>`)} 
+                <div class="col-10 accessed-last" data-a='${
+                  leads.appointment_time
+                }'>
+                     ${replaceNullOrTempty(
+                       leads.appointment_time,
+                       `<b>${moment(leads.appointment_time).format(
+                         "hh:mm A DD MMMM YYYY"
+                       )}</b>`,
+                       `<span><i>(Not available data)</i><span>`
+                     )} 
                 </div>
                   <div class="col-1">
                     <i class="far fa-clipboard" title="Take note" ></i>
                 </div>
                 <div class="col-10 accessed-last">
-                    ${replaceNullOrTempty(leads.take_note,leads.take_note,`<span><i>(Not available data)</i><span>`)}
+                    ${replaceNullOrTempty(
+                      leads.take_note,
+                      leads.take_note,
+                      `<span><i>(Not available data)</i><span>`
+                    )}
                 </div>
                 <div class="col-1">
                 </div>
                 <div class="col-10 accessed-last">
-                  ${leads.tags_keywords ? templatingLoop(leads.tags_keywords, (data) => { return `<div class="c-tag"><span dir="ltr">${data}</span></div>` }) : ''}
+                  ${
+                    leads.tags_keywords
+                      ? templatingLoop(leads.tags_keywords, data => {
+                          return `<div class="c-tag"><span dir="ltr">${data}</span></div>`;
+                        })
+                      : ""
+                  }
                 </div>
               </div >
           </div>
         </div>
-      </div> `
+      </div> `;
   }
 
   renderConfirmSync(type) {
-    let _title = type === 'to' ? 'Confirm synchronization from Zendesk to O2O ?' : 'Confirm synchronization from O2O to Zendesk ?'
+    let _title =
+      type === "to"
+        ? "Confirm synchronization from Zendesk to O2O ?"
+        : "Confirm synchronization from O2O to Zendesk ?";
     return `
           <div class='row confirm_sync' style='margin: 0;'>
               <div class='col-12' style='text-align: center;'>
@@ -121,119 +152,128 @@ export class CustomerInfo {
               <button id='saveData' style='font-size: 1rem !important;width: 100%;' type="button" class="btn btn-primary btn-lg">Save</button>
             </div>
           </div>
-      `
+      `;
   }
 
   init(data) {
     let _client = this._client;
     let o2oApi = this.o2oApi;
     this.dataUser = data;
-    console.log(this.dataUser)
-    addEventClickToElement('#openTypeCreate1', (e) => {
-      var subject = $(e.target).data().ticket_subject || 'unknown subject';
+    addEventClickToElement("#openTypeCreate1", e => {
+      var subject = $(e.target).data().ticket_subject || "unknown subject";
       data.subject = subject;
-      setLocalStorage('requester', data);
-      _client.invoke('routeTo', 'ticket', 'new');
+      setLocalStorage("requester", data);
+      _client.invoke("routeTo", "ticket", "new");
       // triggerOpenPopupCreate(e, true, _client)
     });
-    addEventClickToElement('#openUpdateType', (e) => {
+    addEventClickToElement("#openUpdateType", e => {
       let _client = this._client;
       _client._instanceClients = {};
       let o2oApi = this.o2oApi;
       let dataUser = this.dataUser;
-      return _client.invoke('instances.create', {
-        location: 'modal',
-        url: 'assets/iframe.html',
-        size: {
-          width: '450px',
-          height: '550px'
-        }
-      }).then(function (modalContext) {
-        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
-        var modalClient = _client.instance(instanceGuid);
-        setTimeout(() => {
-          document.querySelector('.popup_create .fa-times').click();
-          var passParams = {
-            type: 'customer_update',
-            parentGuid: _client._instanceGuid,
-            o2oApi: o2oApi,
-            dataUser: dataUser
-          };
-          modalClient.trigger('template_getting_type', passParams);
-        }, 500);
-      });
+      return _client
+        .invoke("instances.create", {
+          location: "modal",
+          url: "assets/iframe.html",
+          size: {
+            width: "450px",
+            height: "550px"
+          }
+        })
+        .then(function(modalContext) {
+          var instanceGuid = modalContext["instances.create"][0].instanceGuid;
+          var modalClient = _client.instance(instanceGuid);
+          setTimeout(() => {
+            document.querySelector(".popup_create .fa-times").click();
+            var passParams = {
+              type: "customer_update",
+              parentGuid: _client._instanceGuid,
+              o2oApi: o2oApi,
+              dataUser: dataUser
+            };
+            setLocalStorage("trigger_modal_data", passParams);
+            //modalClient.trigger("template_getting_type", passParams);
+          }, 500);
+        });
     });
 
-    addEventShowHideHeader('.customer_info', _client);
+    addEventShowHideHeader(".customer_info", _client);
 
-    addEventClickToElement('.syncData', async (e) => {
+    addEventClickToElement(".syncData", async e => {
       var type = $(e.target).data().type;
       let _this = this;
       let _client = this._client;
       _client._instanceClients = {};
       let dataUser = this.dataUser;
       //let data = await this.o2oApi.updateZendeskUser(_client);
-      //console.log(data);
-      return _client.invoke('instances.create', {
-        location: 'modal',
-        url: 'assets/iframe.html',
-        size: {
-          width: '470px',
-          height: '200px'
-        }
-      }).then(function (modalContext) {
-        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
-        var modalClient = _client.instance(instanceGuid);
-        var passParams = {
-          type: 'confirm_sync',
-          parentGuid: _client._instanceGuid,
-          o2oApi: o2oApi,
-          dataUser: dataUser,
-          content: _this.renderConfirmSync(type)
-        };
-        setTimeout(() => {
-          modalClient.trigger('template_getting_type', passParams);
-        }, 1000);
-      });
+      return _client
+        .invoke("instances.create", {
+          location: "modal",
+          url: "assets/iframe.html",
+          size: {
+            width: "470px",
+            height: "200px"
+          }
+        })
+        .then(function(modalContext) {
+          var instanceGuid = modalContext["instances.create"][0].instanceGuid;
+          var modalClient = _client.instance(instanceGuid);
+          var passParams = {
+            type: "confirm_sync",
+            parentGuid: _client._instanceGuid,
+            o2oApi: o2oApi,
+            dataUser: dataUser,
+            content: _this.renderConfirmSync(type)
+          };
+          setLocalStorage("trigger_modal_data", passParams);
+          // setTimeout(() => {
+          //   modalClient.trigger("template_getting_type", passParams);
+          // }, 1000);
+        });
     });
     //event interecst show modal
-    addEventClickToElement('#openUpdateInterest', (e) => {
+    addEventClickToElement("#openUpdateInterest", e => {
       let _this = this;
       var type = $(e.target).data().type;
       let dataUser = _this.dataUser;
       let _client = _this._client;
       _client._instanceClients = {};
-      return _client.invoke('instances.create', {
-        location: 'modal',
-        url: 'assets/iframe.html',
-        size: {
-          width: '800px',
-          height: '600px'
-        }
-      }).then(function (modalContext) {
-        var instanceGuid = modalContext['instances.create'][0].instanceGuid;
-        var modalClient = _client.instance(instanceGuid);
+      return _client
+        .invoke("instances.create", {
+          location: "modal",
+          url: "assets/iframe.html",
+          size: {
+            width: "800px",
+            height: "600px"
+          }
+        })
+        .then(function(modalContext) {
+          var instanceGuid = modalContext["instances.create"][0].instanceGuid;
+          var modalClient = _client.instance(instanceGuid);
 
-        var passParams = {
-          type: 'interest_update',
-          parentGuid: _client._instanceGuid,
-          o2oApi: o2oApi,
-          dataUser: dataUser
-        };
-        setTimeout(() => {
-          modalClient.trigger('template_getting_type', passParams);
-        }, 1000);
-      });
+          var passParams = {
+            type: "interest_update",
+            parentGuid: _client._instanceGuid,
+            o2oApi: o2oApi,
+            dataUser: dataUser
+          };
+          setLocalStorage("trigger_modal_data", passParams);
+          // setTimeout(() => {
+          //   modalClient.trigger("template_getting_type", passParams);
+          // }, 1000);
+        });
     });
 
     // listen event trigger from modal
-    _client.on('data_modal_passing', (modalData) => {
+    _client.on("data_modal_passing", modalData => {
       if (modalData.toastr) {
-        modalData.toastrType ? toastr.success(modalData.message) : toastr.error(modalData.message);
+        modalData.toastrType
+          ? toastr.success(modalData.message)
+          : toastr.error(modalData.message);
       }
       if (modalData.reload) {
-        renderLoading(true, '.main', _client);
         setTimeout(() => {
+          //renderLoading(true, ".main", _client);
           window.location.reload(true);
         }, 1000);
       }
@@ -245,22 +285,24 @@ export function _initModal() {
   let client = this._client;
   let parentClient = this._parentClient;
   let o2oApi = this.o2oApi;
-  addEventClickToElement('#closeModal', (e) => {
-    client.invoke('destroy');
+  addEventClickToElement("#closeModal", e => {
+    client.invoke("destroy");
   });
-  addEventClickToElement('#saveData', async (e) => {
-    renderLoading(true, '.confirm_sync');
+  addEventClickToElement("#saveData", async e => {
+    renderLoading(true, ".confirm_sync");
     var postData = this.dataUser;
     var currentUser = {};
     try {
-      currentUser = (await parentClient.get('ticket.requester'))['ticket.requester'];
+      currentUser = (await parentClient.get("ticket.requester"))[
+        "ticket.requester"
+      ];
     } catch (err) {
-      currentUser = (await parentClient.get('user'))['user'];
+      currentUser = (await parentClient.get("user"))["user"];
     }
-    var phone = _.filter(currentUser.identities, (o) => {
-      return o.type == 'phone_number'
+    var phone = _.filter(currentUser.identities, o => {
+      return o.type == "phone_number";
     })[0];
-    currentUser.phone = phone ? phone.value : '';
+    currentUser.phone = phone ? phone.value : "";
     postData.fullName = currentUser.name;
     postData.staffInCharge = postData.sales_man_id;
     postData.status = postData.care_status_id;
@@ -269,22 +311,22 @@ export function _initModal() {
     !isNullOrTempty(currentUser.email) && (postData.email = postData.email);
     var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
     var passParams = {
-      "reload": true,
-      "toastr": true,
-      "toastrType": true,
-      "message": "Updated success"
+      reload: true,
+      toastr: true,
+      toastrType: true,
+      message: "Updated success"
     };
     if (!updateLead) {
       var passParams = {
-        "reload": false,
-        "toastr": true,
-        "toastrType": false,
-        "message": "'Update failed! Try again'"
+        reload: false,
+        toastr: true,
+        toastrType: false,
+        message: "'Update failed! Try again'"
       };
     }
     setTimeout(() => {
-      parentClient.trigger('data_modal_passing', passParams);
-      client.invoke('destroy');
+      parentClient.trigger("data_modal_passing", passParams);
+      client.invoke("destroy");
     }, 1000);
   });
 }

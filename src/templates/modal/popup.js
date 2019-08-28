@@ -146,7 +146,10 @@ export function openUpdateCusomer() {
         o2oApi: o2oApi,
         dataUser: dataUser
       };
-      modalClient.trigger('template_getting_type', passParams);
+
+      setLocalStorage("trigger_modal_data", passParams);
+
+      // modalClient.trigger('template_getting_type', passParams);
     }, 500);
   });
 }

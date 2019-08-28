@@ -236,7 +236,9 @@ export function openAccessLog() {
                 parentGuid: _client._instanceGuid,
                 o2oApi: o2oApi
             };
-            modalClient.trigger('template_getting_type', passParams);
+            setLocalStorage("trigger_modal_data", passParams);
+
+            // modalClient.trigger('template_getting_type', passParams);
         }, 500);
     });
 }
@@ -262,7 +264,8 @@ export function openChart(_this, e) {
                 o2oApi: o2oApi,
                 type_chart: type_chart
             };
-            modalClient.trigger('template_getting_type', passParams);
+            setLocalStorage("trigger_modal_data", passParams);
+            // modalClient.trigger('template_getting_type', passParams);
         }, 500);
     });
 }

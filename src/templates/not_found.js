@@ -1,5 +1,6 @@
 import {
     addEventClickToElement,
+    resizeContainerTo,
 } from "../javascripts/lib/helpers";
 
 export function renderNotFound(msg) {
@@ -15,13 +16,13 @@ export function renderNotFound(msg) {
         return `<div class="notfound">
                     <div class='bg_img'></div>
                     <div class='content'>
-                        <span>${msg},<a href='javascript:void(0)'>retry</a>?</br></span>
+                        <span>${msg.msg} <br/><a id="reloadA" href='javascript:void(0)'>Retry?</a></br<a></span>
                     </div>
                 </div>`
     }
 
 }
-export function initNotFoundFunction(msg) {
+export function initNotFoundFunction(msg, client) {
     addEventClickToElement('.notfound a', (e) => {
         window.location.reload(true);
     });
@@ -30,4 +31,9 @@ export function initNotFoundFunction(msg) {
             window.location.reload(true);
         }, 1000);
     }
+    if (msg.code && msg.code === "unAuthorize") {
+        $("#reloadA").hide()
+        $("#reloadA").after('<hr><span>After that, need refresh app to apply new token, following below image to refresh.  </span><img style="box-shadow: 2px 2px 5px;" src="./tutorial.png" />')
+    }
+    client && resizeContainerTo(client, 300);
 }

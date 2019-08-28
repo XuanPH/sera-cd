@@ -1,25 +1,24 @@
 import {
-    addEventClickToElement,
-    renderSelect2,
-    templatingLoop,
-    isNullOrTempty,
-    isValidEmail,
-    renderLoadingWithPanel,
-    replaceNullOrTempty
-} from '../../javascripts/lib/helpers';
+  addEventClickToElement,
+  renderSelect2,
+  templatingLoop,
+  isNullOrTempty,
+  isValidEmail,
+  renderLoadingWithPanel,
+  replaceNullOrTempty
+} from "../../javascripts/lib/helpers";
 
 class CustomerUpdate {
-    constructor(_client, dataUser, o2oApi, _parentClient) {
-        this._client = _client;
-        this._parentClient = _parentClient;
-        this.dataUser = dataUser;
-        this.o2oApi = o2oApi;
-    }
-    async render() {
-        var requester = this.dataUser;
-        var commonData = (await this.getCommonData());
-        console.log(requester);
-        return `
+  constructor(_client, dataUser, o2oApi, _parentClient) {
+    this._client = _client;
+    this._parentClient = _parentClient;
+    this.dataUser = dataUser;
+    this.o2oApi = o2oApi;
+  }
+  async render() {
+    var requester = this.dataUser;
+    var commonData = await this.getCommonData();
+    return `
             <div class='customer_update'>
                 <div class="row">
                     <div class='col-12'>
@@ -28,22 +27,32 @@ class CustomerUpdate {
                                 <div class='col-12'>
                                     <div class="form-group">
                                         <label for="name">Name <span class='required'>*</span></label>
-                                        <input type='hidden' class="form-control" id="zen_id" name='zen_id' value='${requester.zen_req_id}'></input>
-                                        <input type='hidden' class="form-control" id="id" name='id' value='${requester.id}'></input>
-                                        <input class="form-control" id="name" placeholder='enter lead name'  value='${requester.name}' required></input>
+                                        <input type='hidden' class="form-control" id="zen_id" name='zen_id' value='${
+                                          requester.zen_req_id
+                                        }'></input>
+                                        <input type='hidden' class="form-control" id="id" name='id' value='${
+                                          requester.id
+                                        }'></input>
+                                        <input class="form-control" id="name" placeholder='enter lead name'  value='${
+                                          requester.name
+                                        }' required></input>
                                     </div>
                                 </div>
                             
                                 <div class='col-12'>
                                     <div class="form-group">
                                         <label for="email">Email</label>
-                                        <input class="form-control" id="email" name="email" placeholder='enter lead email'  value='${requester.email}'></input>
+                                        <input class="form-control" id="email" name="email" placeholder='enter lead email'  value='${
+                                          requester.email
+                                        }'></input>
                                     </div>
                                 </div>
                                 <div class='col-12'>
                                     <div class="form-group">
                                         <label for="phone">Phone <span class='required'>*</span></label>
-                                        <input class="form-control" id="phone" name="phone" placeholder='enter lead phone number'  value='${requester.phone}' required></input>
+                                        <input class="form-control" id="phone" name="phone" placeholder='enter lead phone number'  value='${
+                                          requester.phone
+                                        }' required></input>
                                     </div>
                                 </div>
                                 <div class='col-12'>
@@ -51,9 +60,12 @@ class CustomerUpdate {
                                         <label for="care_status">Status <span class='required'>*</span></label>
                                         <select style='width: 100%;' class='form-control' id='care_status' name="care_status" required>
                                             <option value=''>---- Choose care status ----</option>
-                                            ${templatingLoop(commonData.careStatus,(status) => {
-                                                return `<option style='color:${status.color}' value='${status.id}'>${status.dataValue}</option>`
-                                            })}
+                                            ${templatingLoop(
+                                              commonData.careStatus,
+                                              status => {
+                                                return `<option style='color:${status.color}' value='${status.id}'>${status.dataValue}</option>`;
+                                              }
+                                            )}
                                         </select>
                                     </div>
                                 </div>
@@ -62,16 +74,21 @@ class CustomerUpdate {
                                         <label for="sales_man">Salesman <span class='required'>*</span></label>
                                         <select style='width: 100%;'  class='form-control' id='sales_man' name="sales_man" required>
                                         <option value=''>---- Choose sales man ----</option>
-                                        ${templatingLoop(commonData.salesman,(status) => {
-                                            return `<option value='${status.id}'>${status.firstName} | ${status.email}</option>`
-                                        })}
+                                        ${templatingLoop(
+                                          commonData.salesman,
+                                          status => {
+                                            return `<option value='${status.id}'>${status.firstName} | ${status.email}</option>`;
+                                          }
+                                        )}
                                         </select>
                                     </div>
                                 </div>
                                 <div class='col-12'>
                                     <div class="form-group">
                                         <label for="note">Note</label>
-                                        <textarea  class='form-control' id='note' name="note" placeholder='enter note'>${replaceNullOrTempty(requester.take_note)}</textarea>
+                                        <textarea  class='form-control' id='note' name="note" placeholder='enter note'>${replaceNullOrTempty(
+                                          requester.take_note
+                                        )}</textarea>
                                     </div>
                                 </div>
                                 <div class='col-12' style='text-align: right;'>
@@ -89,81 +106,74 @@ class CustomerUpdate {
                     </div>
                 </div>
             </div>
-        `
-    }
-    async init() {
-        let client = this._client;
-        let parentClient = this._parentClient;
-        let o2oApi = this.o2oApi;
-        addEventClickToElement('#closeModal', (e) => {
-            client.invoke('destroy');
-        });
-        renderSelect2('#care_status,#sales_man')
-        $("#sales_man").val(this.dataUser.sales_man_id || '');
-        $("#care_status").val(this.dataUser.care_status_id || '');
-        addEventClickToElement('#saveData', async (e) => {
-            var postData = {
-                id: $("#id").val(),
-                fullName: $("#name").val() || '',
-                phone: $("#phone").val() || '',
-                email: $("#email").val() || '',
-                status: $("#care_status").val() || '',
-                staffInCharge: $("#sales_man").val() || '',
-                note: $("#note").val() || ''
-            }
-            if (!isNullOrTempty(postData.fullName) && !isNullOrTempty(postData.phone) &&
-                !isNullOrTempty(postData.status) && !isNullOrTempty(postData.staffInCharge)) {
-                if (!isNullOrTempty(postData.email) && (!isValidEmail(postData.email))) {
-                    this.notify('Invalid email', false);
-                } else {
-                    try {
-                        $(".customer_update > div").before(renderLoadingWithPanel())
-                        var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
-                        if (updateLead) {
-                            toastr.success('Update success');
-                            var passParams = {
-                                "reload": true,
-                            };
-                            parentClient.trigger('data_modal_passing', passParams);
-                            //client.invoke('destroy');
-                        }
-                        $(".loading-panel").remove();
-                    } catch (error) {
-                        console.log('SERA-CD[Error]:' + error)
-                        toastr.error('Something wrong when update lead, please try again');
-                    }
-                }
-            }
-        })
-        // $("#sales_man").val(this.dataUser.sales_man_id || '')
-    }
-    async getCommonData() {
-        let data = (await this.o2oApi.getCommonData()).data;
-        let careStatus = _.filter(data.commonData, (o) => !o.isDelete)
-        let salesman = data.users;
-        let interests = data.interests;
-        return {
-            careStatus,
-            salesman
-        }
-    }
-    notify(text, type, timeout = 2000) {
-        if (!type) {
-            $(".alert-form.alert-danger").text(text).slideDown(200, function () {
-                let el = this;
-                setTimeout(() => {
-                    $(el).slideUp(100);
-                }, timeout);
-            });
+        `;
+  }
+  async init() {
+    let client = this._client;
+    let parentClient = this._parentClient;
+    let o2oApi = this.o2oApi;
+    let dataUser = this.dataUser;
+    addEventClickToElement("#closeModal", e => {
+      client.invoke("destroy");
+    });
+    renderSelect2("#care_status,#sales_man");
+    $("#sales_man").val(this.dataUser.sales_man_id || "");
+    $("#care_status").val(this.dataUser.care_status_id || "");
+    addEventClickToElement("#saveData", async e => {
+      var postData = {
+        id: $("#id").val(),
+        fullName: $("#name").val() || "",
+        phone: $("#phone").val() || "",
+        email: $("#email").val() || "",
+        status: $("#care_status").val() || "",
+        staffInCharge: $("#sales_man").val() || "",
+        note: $("#note").val() || "",
+        interest: dataUser.interest
+      };
+      if (
+        !isNullOrTempty(postData.fullName) &&
+        !isNullOrTempty(postData.phone) &&
+        !isNullOrTempty(postData.status) &&
+        !isNullOrTempty(postData.staffInCharge)
+      ) {
+        if (!isNullOrTempty(postData.email) && !isValidEmail(postData.email)) {
+          this.notify("Invalid email", false);
         } else {
-            $(".alert-form.alert-success").text(text).slideDown(200, function () {
-                let el = this;
-                setTimeout(() => {
-                    $(el).slideUp(100);
-                }, timeout);
-            });
+          try {
+            $(".customer_update > div").before(renderLoadingWithPanel());
+            var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
+            if (updateLead) {
+              //toastr.success('Update success');
+              var passParams = {
+                reload: true,
+                toastr: true,
+                toastrType: true,
+                message: "Updated success"
+              };
+              parentClient.trigger("data_modal_passing", passParams);
+              client.invoke("destroy");
+            }
+            $(".loading-panel").remove();
+          } catch (error) {
+            console.error("SERA-CD[Error]:" + error);
+            toastr.error("Something wrong when update lead, please try again");
+          }
         }
-    }
+      }
+    });
+    // $("#sales_man").val(this.dataUser.sales_man_id || '')
+  }
+  async getCommonData() {
+    let data = (await this.o2oApi.getCommonData()).data;
+    let careStatus = _.filter(data.commonData, o => !o.isDelete);
+    let salesman = data.users;
+    let interests = data.interests;
+    return {
+      careStatus,
+      salesman,
+      interests
+    };
+  }
 }
 
-export default CustomerUpdate
+export default CustomerUpdate;

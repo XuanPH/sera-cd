@@ -3,7 +3,7 @@
     "name": "SERA-CD",
     "short_description": "Connect your user to my CRM",
     "long_description": "Connect your user to my CRM",
-    "installation_instructions": "Using default token for testing, if you want to go real, need to register my crm account at: https://o2o.vn/",
+    "installation_instructions": "In order to install the SERA CD app into Zendesk account, complete following step: \n\n*Sign in to your Zendesk account, select the **Admin** icon from the bottom left corner of your screen. \n* Go to the Marketplace icon under **Apps**. \n* Use the search bar at the far right end to search for the **SERA CD** app. \n* On the Zoho CRM app page, click the **Install App** button in the upper right corner. \n* After you've downloaded the app, you can rename it to anything you want. Then provide an authentication token using the following procedure: Log in to **O2O CRM**, go to **General setting -> Zendesk**, you can create the api key on this. Your **SERA CD** app can be found by expanding the 'Apps' panel from **People page** and **Ticket Page**. Details from CRM will now be displayed on the right side of **People page** and **Ticket page**.",
     "title": "SERA-CD"
   },
   "default": {

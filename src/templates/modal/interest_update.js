@@ -5,7 +5,8 @@ import {
     isNullOrTempty,
     formatMoney,
     renderLoadingWithPanel,
-    renderSelect2Tags
+    renderSelect2Tags,
+    getLocalStorage
 } from '../../javascripts/lib/helpers';
 
 class InterestUpdate {
@@ -125,7 +126,6 @@ class InterestUpdate {
         addEventClickToElement('#closeModal', (e) => {
             client.invoke('destroy');
         });
-
         addEventClickToElement('#saveData', async (e) => {
             var postData = {
                 id: dataUser.id,
@@ -156,11 +156,15 @@ class InterestUpdate {
                 $(".interest_update > div").before(renderLoadingWithPanel())
                 var updateLead = (await o2oApi.updateLead(postData)).data.isSuccess;
                 if (updateLead) {
-                    toastr.success("Update interest success");
+                    //toastr.success("Update interest success");
                     var passParams = {
                         "reload": true,
+                        "toastr": true,
+                        "toastrType": true,
+                        "message": "Updated success"
                     };
                     parentClient.trigger('data_modal_passing', passParams);
+                    client.invoke('destroy');
                 }
                 $(".loading-panel").remove();
             } catch (error) {
@@ -168,7 +172,6 @@ class InterestUpdate {
                 $(".loading-panel").remove();
             }
         })
-
 
         this.commonData.interests.interestConfigResponse.forEach(async (value, index) => {
             if (_.filter(['dropdown', 'address', 'remote'], (o) => o === value.inputType).length > 0) {
@@ -196,9 +199,9 @@ class InterestUpdate {
                 }
             } else if (value.inputType === "boolean") {
                 if (currentInterest[value.code]) {
-                    if (currentInterest[value.code] === "yes") {
+                    if (currentInterest[value.code][0] === "yes") {
                         $("#customRadio1").trigger('click');
-                    } else if (currentInterest[value.code] === "no") {
+                    } else if (currentInterest[value.code][0] === "no") {
                         $("#customRadio2").trigger('click');
                     }
                 }

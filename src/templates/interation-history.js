@@ -101,8 +101,8 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.changeCalendar`)}</a>
-              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
-              <p>${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}
+              ${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -114,8 +114,9 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.changeStatusLead`)}</a>
-              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
-              <p>${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}</p>
+              <p>${I18n.t(`callLogs.from`)} ${item.previousStatus ? `<b>${_this.getStatus(item.previousStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}
+              ${I18n.t(`callLogs.to`)} ${item.currentStatus ? `<b>${_this.getStatus(item.currentStatus)}</b>` : `<b>${I18n.t(`callLogs.notStatus`)}</b>`}
+              </p>
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -127,7 +128,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`history.${item.currentStatus}`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -150,7 +151,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.updateNot`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -162,7 +163,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.sendTelegram`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -174,7 +175,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.replyTelegram`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -186,7 +187,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`callLogs.setupCalendarToTelegram`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -198,7 +199,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`responseSale.${item.currentStatus}`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -210,7 +211,7 @@ class InteractionHistory {
         return `<li>
               <div class='icon-timeline'></div>
               <a style='padding-right: 5px;' target='_blank' href='javascript:void(0)' >${I18n.t(`responseSale.${item.currentStatus}`)}</a>
-              ${item.note ? `<p>${item.note}</p>` : ''}
+              ${item.note ? `<p><i>${item.note}</i></p>` : ''}
               <p><span class='time-gray'>${moment(item.createdAt).fromNow()} at ${moment(item.createdAt).format('hh:mm A DD MMMM YYYY')}</span></p>
               <i class="fas fa-plus pointer" id='dropdownMenuButtonw${index}'
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -288,10 +289,9 @@ class InteractionHistory {
   }
 
   async read(isOverride) {
-    renderLoading(true, 'ul.timeline');
+    renderLoading(true, 'ul.timeline', this._client);
     let response = (await this.o2oApi.getLeadActivities(this.lastId, this.filterType)).data;
     this.commonData = (await this.o2oApi.getCommonData()).data.commonData;
-    console.log(this.commonData);
     this.lastId = this.lastId += response.size;
     if (response && response.data && response.data.length > 0) {
       if (isOverride !== true) {

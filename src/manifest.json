@@ -1,9 +1,9 @@
 {
   "name": "SERA-CD",
   "author": {
-    "name": "Twin Software Solutions",
-    "email": "support@twin.vn",
-    "url": "https://twin.vn"
+    "name": "Quesera",
+    "email": "contact@quesera.sg",
+    "url": "https://quesera.sg"
   },
   "defaultLocale": "en",
   "private": false,
@@ -21,22 +21,15 @@
       },
       "background": {
         "url": "assets/iframe.html"
-      },
-      "nav_bar": "https://o2o.vn/"
+      }
     }
   },
   "parameters": [{
     "name": "O2O-Token",
     "type": "text",
-    "required": true,
-    "secure": false,
-    "default": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJPMk8tQ1JNIiwiY29tcGFueUlkIjoiNWI2N2VkYWI5NjVlYWYwMDBkNDQ2YThlIiwidGltZSI6MTU2NTU4MDExM30.fAlZa5r6NrJDb0ThcvA8LWxdtCwhFic7AiICjUfFEzc"
-  }, {
-    "name": "Zendesk-API-Tokens",
-    "type": "text",
     "required": false,
     "secure": false,
-    "default": "bybPG6ipeluoBdvWhoRUlqzpmZ1CI6ZgCeXKpIW2"
+    "default": ""
   }],
   "version": "1.0",
   "frameworkVersion": "2.0"
